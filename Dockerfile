@@ -2,8 +2,8 @@ FROM golang:latest
 
 WORKDIR /app
 
-COPY . .
+COPY go.mod go.sum ./
 
 RUN go mod download
 
-EXPOSE 8080
+EXPOSE 80
