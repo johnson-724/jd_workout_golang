@@ -2,10 +2,23 @@ version: "3.7"
 
 services:
   app:
-    image: "golang:latest"
+    build: .
     tty: true
     stdin_open: true
     ports:
-      - "8080:8080"
+      - "80:80"
     volumes:
       - ./:/app
+  mysql:
+    image: mysql:latest
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: jd_workout
+      MYSQL_USER: test
+      MYSQL_PASSWORD: test
+volumes:
+  mysql_data:
