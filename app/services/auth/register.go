@@ -1,9 +1,8 @@
 package auth
 
 import (
-	"crypto/sha256"
-	"encoding/hex"
 	"github.com/gin-gonic/gin"
+	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 	db "jd_workout_golang/lib/database"
 )
@@ -23,15 +22,16 @@ func RegisterAction(c *gin.Context) {
 
 		return
 	}
+	hash, _ := bcrypt.GenerateFromPassword([]byte(registerForm.Password), bcrypt.DefaultCost)
 
 	user := user{
 		Username: registerForm.Username,
 		Email:    registerForm.Email,
-		Password: hex.EncodeToString(sha256.New().Sum([]byte(registerForm.Password))),
+		Password: string(hash),
 	}
 
 	db := db.InitDatabase()
-	
+
 	db.AutoMigrate(&user)
 
 	storeUser(&user, db)

@@ -1,10 +1,9 @@
 package auth
 
 import (
-	"crypto/sha256"
-	"encoding/hex"
-	"github.com/gin-gonic/gin"
 	db "jd_workout_golang/lib/database"
+	"github.com/gin-gonic/gin"
+	"golang.org/x/crypto/bcrypt"
 )
 
 func LoginAction(c *gin.Context) {
@@ -25,9 +24,10 @@ func LoginAction(c *gin.Context) {
 
 	user := user{}
 	result := db.Where("email = ?", loginForm.Email).First(&user)
-	password := hex.EncodeToString(sha256.New().Sum([]byte(loginForm.Password)))
+	
+	error := bcrypt.CompareHashAndPassword([] byte(user.Password), []byte(loginForm.Password))
 
-	if result.Error != nil || result.RowsAffected == 0|| user.Password != password {
+	if result.Error != nil || result.RowsAffected == 0|| error != nil {
 		c.JSON(422, gin.H{
 			"message": "帳號或密碼錯誤",
 			"error": result.Error,
