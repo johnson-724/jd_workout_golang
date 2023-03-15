@@ -6,11 +6,10 @@ import (
 )
 
 func RegisterUser(r *gin.RouterGroup) {
-	r.GET("/user", func(c *gin.Context) {
-		c.String(200, "user")
-	})
+	r.POST("/register", auth.RegisterAction)
+	r.POST("/login", auth.LoginAction)
 
-	r.POST("/user/register", auth.RegisterAction)
+	userGroup := r.Group("/user").Use(auth.ValidateToken)
 
-	r.POST("/user/login", auth.LoginAction)
+	userGroup.GET("/", auth.InfoAction)
 }
