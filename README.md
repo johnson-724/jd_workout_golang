@@ -11,4 +11,9 @@ run `go run test-api.go` in the container.
 `migrate create -ext sql -dir database/migrations create_users_table`
 
 ### run migrate
-`migrate -database ${MYSQL_URL} -path db/migrations up`
+- up
+`migrate -database "mysql://${username}:${password}@tcp${MYSQL_URL}/${DB_NAME}" -path db/migrations up`
+
+
+- down
+`migrate -database "mysql://${username}:${password}@tcp${MYSQL_URL}/${DB_NAME}" -path db/migrations down ${BATCH}`
