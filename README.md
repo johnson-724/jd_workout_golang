@@ -1,5 +1,8 @@
+## Run docker
+
+* `docker-compose build`
+* `docker-compose up -d`
+
 ## Run test api
 
-docker-compose up -d
-
-run `go run test-api.go` in the container.
+run `go run cmd/test-api.go` in the container.
