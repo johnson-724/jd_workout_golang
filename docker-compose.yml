@@ -10,7 +10,7 @@ services:
     volumes:
       - ./:/app
   mysql:
-    image: mysql:latest
+    image: mysql:8.0.31
     ports:
       - "3306:3306"
     volumes:
@@ -20,5 +20,11 @@ services:
       MYSQL_DATABASE: jd_workout
       MYSQL_USER: test
       MYSQL_PASSWORD: test
+  lint:
+    image: golangci/golangci-lint:v1.52.2
+    volumes:
+      - .:/app
+    working_dir: /app
+    command: [ "tail", "-f", "/dev/null" ]
 volumes:
   mysql_data:
