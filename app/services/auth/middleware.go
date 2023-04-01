@@ -14,13 +14,33 @@ import (
 var uid float64
 
 func ValidateToken(c *gin.Context) {
-
 	env.Load()
-	tokenString := strings.Split(c.GetHeader("Authorization"), "Bearer ")[1]
-	// jwt.SigningMethodHS256
 
-	token, _ := jwt.Parse(
-		tokenString,
+	val := c.GetHeader("Authorization")
+	if val == "" {
+		c.JSON(http.StatusForbidden, gin.H{
+			"error": "JWT token is empty",
+		})
+
+		c.Abort()
+
+		return
+	}
+
+	tokenString := strings.Split(val, "Bearer ")
+	if len(tokenString) != 2 {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "invalid token",
+		})
+
+		c.Abort()
+
+		return
+	}
+
+	// jwt.SigningMethodHS256
+	token, err := jwt.Parse(
+		tokenString[1],
 		// func to get the key for validating
 		func(token *jwt.Token) (interface{}, error) {
 			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
@@ -29,6 +49,16 @@ func ValidateToken(c *gin.Context) {
 
 			return []byte(os.Getenv("APP_KEY")), nil
 		})
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "invalid token",
+		})
+
+		c.Abort()
+
+		return
+	}
 
 	// Type Assertion
 	// token.Claims is implement jwt.MapClaims type, claims is jwt.MapClaims and ok == true
