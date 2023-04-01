@@ -29,4 +29,4 @@ jobs:
           key: ${{ secrets.DEPLOY_PRIVATE_KEY }}
           port: ${{ secrets.DEPLOY_PORT }}
           script: |
-            export PROCESS_TYPE=cd && cd /app/jd_workout_golang && git pull origin master && docker-compose pull && docker-compose up -d   
+            export PROCESS_TYPE=cd && cd /app/jd_workout_golang && docker-compose pull && docker-compose up -d   
