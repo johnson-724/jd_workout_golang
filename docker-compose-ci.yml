@@ -2,13 +2,13 @@ version: "3.7"
 
 services:
   app:
-    image: jdworkoutapp/jd_workout_golang:latest
+    image: ghcr.io/jdworkoutapp/jd_workout_golang:latest
     tty: true
     stdin_open: true
     ports:
       - "${APP_PORT:-80}:80"
   mysql:
-    image: jdworkoutapp/jd_workout_golang_mysql:latest
+    image: ghcr.io/jdworkoutapp/jd_workout_golang_mysql:latest
     ports:
       - "3306:3306"
     volumes:
