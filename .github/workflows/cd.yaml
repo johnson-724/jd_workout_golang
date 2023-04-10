@@ -20,6 +20,17 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
           registry: ghcr.io
+          context: ../docker/app
+          dockerfile: DockerfileCI
+      - name: Publish to Registry Mysql
+        uses: elgohr/Publish-Docker-Github-Action@v5
+        with:
+          name: JDWorkoutApp/jd_workout_golang_mysql
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+          registry: ghcr.io
+          context: ../docker/mysql
+          dockerfile: DockerfileCI
       - name: executing remote ssh commands using password
         uses: appleboy/ssh-action@v0.1.8
         with:
