@@ -38,4 +38,6 @@ jobs:
           key: ${{ secrets.DEPLOY_PRIVATE_KEY }}
           port: ${{ secrets.DEPLOY_PORT }}
           script: |
-            export PROCESS_TYPE=cd && cd /app/jd_workout_golang && docker-compose pull && docker-compose up -d   
+            export PROCESS_TYPE=cd && cd /app/jd_workout_golang && docker-compose pull && docker-compose up -d
+      - name: migrate database
+        run: docker exec -it jd_workout_golang-app-1 /bin/sh -c "cd /database && go run migrate.go migrate"
