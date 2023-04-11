@@ -6,6 +6,10 @@ RUN go install github.com/cosmtrek/air@latest
 
 COPY go.mod go.sum ./
 
+COPY release/migrate /app/
+
+COPY database/migrations /app/migrations
+
 RUN go mod download
 
 # add golang-migrate
