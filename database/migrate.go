@@ -3,12 +3,12 @@ package main
 import (
 	"flag"
 	"fmt"
+	migrate "github.com/govel-golang-migration/govel-golang-migration"
+	"github.com/joho/godotenv"
 	"jd_workout_golang/lib/file"
 	"os"
 	"strconv"
 	"strings"
-	migrate "github.com/govel-golang-migration/govel-golang-migration"
-	"github.com/joho/godotenv"
 )
 
 func main() {
@@ -18,6 +18,8 @@ func main() {
 
 	dispatch(method)
 }
+
+var migrationPath = "database/migrations"
 
 func dispatch(method string) {
 	fmt.Printf("dispatch %s method \n", method)
@@ -40,13 +42,13 @@ func dispatch(method string) {
 			return
 		}
 
-		migrate.Make(fileName)
+		migrate.Make(fileName, migrationPath)
 	case "migrate":
 		fmt.Println("migrate")
 
 		loadEnv()
 
-		migrate.Migrate(os.Getenv("DB_HOST"))
+		migrate.Migrate(os.Getenv("DB_HOST"), migrationPath)
 	case "rollback":
 		fmt.Println("rollback")
 
@@ -60,7 +62,7 @@ func dispatch(method string) {
 
 		loadEnv()
 
-		migrate.Rollback(stage, os.Getenv("DB_HOST"))
+		migrate.Rollback(stage, os.Getenv("DB_HOST"), migrationPath)
 	default:
 		fmt.Println("method not support")
 	}
