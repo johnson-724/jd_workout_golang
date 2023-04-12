@@ -10,9 +10,12 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-      - name: Build binary
+      - name: Build app binary
         run: |
           CGO_ENABLED=0 go build -v -a -o release/api-binary ./cmd/main.go
+      - name: Build migrate binary
+        run: |
+          CGO_ENABLED=0 go build -v -a -o release/migrate ./database/migrate.go    
       - name: Publish to Registry
         uses: elgohr/Publish-Docker-Github-Action@v5
         with:
