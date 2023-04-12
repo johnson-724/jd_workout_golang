@@ -3,13 +3,12 @@ package main
 import (
 	"flag"
 	"fmt"
+	"jd_workout_golang/lib/file"
 	"os"
-	"path/filepath"
-	"runtime"
 	"strconv"
 	"strings"
-	"github.com/joho/godotenv"
 	migrate "github.com/govel-golang-migration/govel-golang-migration"
+	"github.com/joho/godotenv"
 )
 
 func main() {
@@ -68,11 +67,9 @@ func dispatch(method string) {
 }
 
 func loadEnv() {
-	_, filename, _, _ := runtime.Caller(0)
+	path := file.AccessFromCurrentDir(".env")
 
-	envFile, _ := filepath.Abs(filepath.Join(filename, "../../.env"))
-
-	if err := godotenv.Load(envFile); err != nil {
+	if err := godotenv.Load(path); err != nil {
 		panic(err)
 	}
 }
