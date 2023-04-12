@@ -19,7 +19,7 @@ func main() {
 	dispatch(method)
 }
 
-var migrationPath = "database/migrations"
+var migrationPath = "database"
 
 func dispatch(method string) {
 	fmt.Printf("dispatch %s method \n", method)

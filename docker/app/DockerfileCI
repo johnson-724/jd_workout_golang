@@ -8,7 +8,7 @@ COPY go.mod go.sum ./
 
 COPY release/migrate /app/
 
-COPY database/migrations /app/migrations
+COPY database/migrations /app/database/migrations
 
 RUN go mod download
 
