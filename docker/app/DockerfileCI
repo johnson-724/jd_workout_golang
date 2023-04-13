@@ -10,7 +10,7 @@ COPY release/migrate /app/
 
 COPY database/migrations /app/database/migrations
 
-COPY release/migraton.so /app/database/migrations
+COPY release/migrations.so /app/database/migrations
 
 RUN go mod download
 
