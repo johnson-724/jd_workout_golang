@@ -4,13 +4,7 @@ WORKDIR /app
 
 RUN go install github.com/cosmtrek/air@latest
 
-COPY go.mod go.sum ./
-
-COPY release/migrate /app/
-
-COPY database/migrations /app/database/migrations
-
-COPY release/migrations.so /app/database/migrations
+COPY . .
 
 RUN go mod download
 
@@ -19,6 +13,12 @@ RUN curl -L https://github.com/golang-migrate/migrate/releases/download/v4.15.2/
 
 EXPOSE 80
 
-COPY release/api-binary /bin/
+RUN go build -v -a -o release/api-binary ./cmd/main.go
+RUN go build -v -a -o release/migrate ./database/migrate.go
+RUN go build -buildmode=plugin -v -a -o release/migrations.so ./database/migrations
+
+RUN cp /app/release/api-binary /bin/
+RUN cp /app/release/migrate /app/
+RUN cp /app/release/migrations.so /app/database/migrations
 
 ENTRYPOINT ["/bin/api-binary"]
