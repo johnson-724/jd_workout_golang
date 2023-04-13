@@ -15,7 +15,10 @@ jobs:
           CGO_ENABLED=0 go build -v -a -o release/api-binary ./cmd/main.go
       - name: Build migrate binary
         run: |
-          CGO_ENABLED=0 go build -v -a -o release/migrate ./database/migrate.go    
+          CGO_ENABLED=0 go build -v -a -o release/migrate ./database/migrate.go   
+      - name: Build migrations.so
+        run: |
+          CGO_ENABLED=0 go build -buildmode=plugin -v -a -o release/migraton.so ./database/migrations
       - name: Publish to Registry
         uses: elgohr/Publish-Docker-Github-Action@v5
         with:

@@ -20,15 +20,19 @@ func main() {
 }
 
 var migrationPath = "database"
+var rebuild = false
 
 func dispatch(method string) {
 	fmt.Printf("dispatch %s method \n", method)
+
+	loadEnv()
+	
+	rebuild, _ := strconv.ParseBool(os.Getenv("REBUILD"))
 
 	switch method {
 	case "install":
 		fmt.Println("install ...")
 
-		loadEnv()
 
 		migrate.Install(os.Getenv("DB_HOST"))
 	case "make":
@@ -46,9 +50,7 @@ func dispatch(method string) {
 	case "migrate":
 		fmt.Println("migrate")
 
-		loadEnv()
-
-		migrate.Migrate(os.Getenv("DB_HOST"), migrationPath)
+		migrate.Migrate(os.Getenv("DB_HOST"), migrationPath, rebuild)
 	case "rollback":
 		fmt.Println("rollback")
 
@@ -60,9 +62,7 @@ func dispatch(method string) {
 			return
 		}
 
-		loadEnv()
-
-		migrate.Rollback(stage, os.Getenv("DB_HOST"), migrationPath)
+		migrate.Rollback(stage, os.Getenv("DB_HOST"), migrationPath, rebuild)
 	default:
 		fmt.Println("method not support")
 	}
