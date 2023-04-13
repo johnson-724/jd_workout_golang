@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
+	"jd_workout_golang/app/middleware"
 	"jd_workout_golang/internal/router"
 )
 
@@ -13,6 +14,7 @@ func main() {
 
 func SetupRouter() *gin.Engine {
 	r := gin.Default()
+	r.Use(middleware.Cors())
 
 	// 註冊 router group
 	apiGroup := r.Group("/api")
