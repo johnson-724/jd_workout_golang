@@ -2,14 +2,15 @@ package router
 
 import (
 	"github.com/gin-gonic/gin"
-	"jd_workout_golang/app/services/auth"
+	auth "jd_workout_golang/app/middleware"
+	authAction "jd_workout_golang/app/services/auth"
 )
 
 func RegisterUser(r *gin.RouterGroup) {
-	r.POST("/register", auth.RegisterAction)
-	r.POST("/login", auth.LoginAction)
+	r.POST("/register", authAction.RegisterAction)
+	r.POST("/login", authAction.LoginAction)
 
 	userGroup := r.Group("/user").Use(auth.ValidateToken)
 
-	userGroup.GET("/", auth.InfoAction)
+	userGroup.GET("/", authAction.InfoAction)
 }

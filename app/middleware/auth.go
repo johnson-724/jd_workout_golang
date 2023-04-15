@@ -1,17 +1,16 @@
-package auth
+package middleware
 
 import (
 	"fmt"
 	"net/http"
 	"os"
 	"strings"
-
 	"github.com/gin-gonic/gin"
 	jwt "github.com/golang-jwt/jwt/v5"
 	env "github.com/joho/godotenv"
 )
 
-var uid float64
+var Uid float64
 
 func ValidateToken(c *gin.Context) {
 	env.Load()
@@ -51,6 +50,7 @@ func ValidateToken(c *gin.Context) {
 		})
 
 	if err != nil {
+		println(err.Error())
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": "invalid token",
 		})
@@ -75,7 +75,7 @@ func ValidateToken(c *gin.Context) {
 		return
 	}
 
-	uid = claims["uid"].(float64)
+	Uid = claims["uid"].(float64)
 
 	fmt.Println(claims["uid"])
 
