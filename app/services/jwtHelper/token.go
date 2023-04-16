@@ -37,6 +37,10 @@ func ValidateToken (tokenString string, uid *float64) (string, bool) {
 			return []byte(os.Getenv("APP_KEY")), nil
 		})
 	
+	if err != nil {
+		return err.Error(), false
+	}
+
 	claims, ok := jwtToken.Claims.(jwt.MapClaims)
 
 	if !ok || !jwtToken.Valid {
