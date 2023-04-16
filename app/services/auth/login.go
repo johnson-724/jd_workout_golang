@@ -25,7 +25,10 @@ func LoginAction(c *gin.Context) {
 
 	db := db.InitDatabase()
 
-	user := models.User{}
+	user := models.User{
+		Email:    loginForm.Email,
+		Password: loginForm.Password,
+	}
 
 	if _, err := validateLogin(&user, db); err != nil {
 		c.JSON(422, gin.H{
@@ -44,14 +47,16 @@ func LoginAction(c *gin.Context) {
 	})
 }
 
-func validateLogin(User *models.User, db *gorm.DB) (bool, error) {
-	result := db.Where("email = ?", User.Email).First(&User)
+func validateLogin(user *models.User, db *gorm.DB) (bool, error) {
+	record := models.User{}
+
+	result := db.Where("email = ?", user.Email).First(&record)
 
 	if result.Error != nil || result.RowsAffected == 0 {
 		return false, result.Error
 	}
 
-	error := bcrypt.CompareHashAndPassword([]byte(User.Password), []byte(User.Password))
+	error := bcrypt.CompareHashAndPassword([]byte(record.Password), []byte(user.Password))
 
 	if error != nil {
 		return false, error
