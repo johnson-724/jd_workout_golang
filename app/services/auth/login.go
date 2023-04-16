@@ -62,5 +62,7 @@ func validateLogin(user *models.User, db *gorm.DB) (bool, error) {
 		return false, error
 	}
 
+	*user = record
+
 	return true, nil
 }
