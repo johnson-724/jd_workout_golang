@@ -1,10 +1,10 @@
-package auth
+package models
 
 import (
 	"gorm.io/gorm"
 )
 
-type user struct {
+type User struct {
 	gorm.Model
 	Username string
 	Email    string `gorm:"unique"`

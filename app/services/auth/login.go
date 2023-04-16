@@ -1,12 +1,12 @@
 package auth
 
 import (
+	"jd_workout_golang/app/services/jwtHelper"
 	"github.com/gin-gonic/gin"
-	jwt "github.com/golang-jwt/jwt/v5"
-	env "github.com/joho/godotenv"
+	"gorm.io/gorm"
 	"golang.org/x/crypto/bcrypt"
 	db "jd_workout_golang/lib/database"
-	"os"
+	"jd_workout_golang/app/models"
 )
 
 func LoginAction(c *gin.Context) {
@@ -25,21 +25,21 @@ func LoginAction(c *gin.Context) {
 
 	db := db.InitDatabase()
 
-	user := user{}
-	result := db.Where("email = ?", loginForm.Email).First(&user)
+	user := models.User{
+		Email:    loginForm.Email,
+		Password: loginForm.Password,
+	}
 
-	error := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(loginForm.Password))
-
-	if result.Error != nil || result.RowsAffected == 0 || error != nil {
+	if _, err := validateLogin(&user, db); err != nil {
 		c.JSON(422, gin.H{
 			"message": "帳號或密碼錯誤",
-			"error":   result.Error,
+			"error":   err.Error(),
 		})
 
 		return
 	}
 	
-	token, _ := generateToken(&user)
+	token, _ := jwtHelper.GenerateToken(&user)
 
 	c.JSON(200, gin.H{
 		"message": "login success",
@@ -47,12 +47,22 @@ func LoginAction(c *gin.Context) {
 	})
 }
 
-func generateToken(u *user) (string, error) {
-	env.Load()
+func validateLogin(user *models.User, db *gorm.DB) (bool, error) {
+	record := models.User{}
 
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"uid": u.ID,
-	})
+	result := db.Where("email = ?", user.Email).First(&record)
 
-	return token.SignedString([]byte(os.Getenv("APP_KEY")))
+	if result.Error != nil || result.RowsAffected == 0 {
+		return false, result.Error
+	}
+
+	error := bcrypt.CompareHashAndPassword([]byte(record.Password), []byte(user.Password))
+
+	if error != nil {
+		return false, error
+	}
+
+	*user = record
+
+	return true, nil
 }

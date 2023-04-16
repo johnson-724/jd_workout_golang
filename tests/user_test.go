@@ -47,9 +47,9 @@ func TestUserWithInvalidToken(t *testing.T) {
 		status int
 		error string
 	}{
-		{"test123", 500, "invalid token"},
-		{"Bearer test1234", 500, "invalid token"},
-		{"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOjN9.mX1ysOl8jt8Rdg2uYNX8B0dhnKsqfyy2UTT28_1pwZQ123", 500, "invalid token"},
+		{"test123", 403, "invalid token"},
+		{"Bearer test1234", 403, "token is malformed: token contains an invalid number of segments"},
+		{"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOjN9.mX1ysOl8jt8Rdg2uYNX8B0dhnKsqfyy2UTT28_1pwZQ123", 403, "token signature is invalid: signature is invalid"},
 	}
 
 	// 建立 response & request
