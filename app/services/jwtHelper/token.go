@@ -36,21 +36,11 @@ func ValidateToken (tokenString string, uid *float64) (string, bool) {
 
 			return []byte(os.Getenv("APP_KEY")), nil
 		})
-
-	if err != nil {
-		return "invalid token", false
-	}
 	
 	claims, ok := jwtToken.Claims.(jwt.MapClaims)
 
 	if !ok || !jwtToken.Valid {
-		return "invalid token", false
-	}
-	
-	exp := int64(claims["exp"].(float64))
-	
-	if exp < time.Now().Unix() {
-		return "token expired", false
+		return err.Error(), false
 	}
 	
 	uidPayload, _ := claims["uid"].(float64)
