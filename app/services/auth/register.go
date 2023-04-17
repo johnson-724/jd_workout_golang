@@ -9,16 +9,17 @@ import (
 )
 
 type registerForm struct {
-	Username string `json:"username" binding:"required"`
-	Email    string `json:"email" binding:"required"`
-	Password string `json:"password" binding:"required"`
+	Username string `json:"username" form:"username" binding:"required"`
+	Password string `json:"password" form:"password" binding:"required"`
+	Email    string `json:"email" form:"email" binding:"required"`
 }
 
 func RegisterAction(c *gin.Context) {
 	registerForm := registerForm{}
-	if err := c.ShouldBindJSON(&registerForm); err != nil {
+	if err := c.ShouldBind(&registerForm); err != nil {
 		c.JSON(422, gin.H{
 			"message": "register failed",
+			"error": err.Error(),
 		})
 
 		return
