@@ -11,13 +11,14 @@ import (
 
 func LoginAction(c *gin.Context) {
 	loginForm := struct {
-		Email    string `json:"email" binding:"required"`
-		Password string `json:"password" binding:"required"`
+		Email    string `json:"email" form:"email" binding:"required"`
+		Password string `json:"password" form:"password" binding:"required"`
 	}{}
 
-	if err := c.ShouldBindJSON(&loginForm); err != nil {
+	if err := c.ShouldBind(&loginForm); err != nil {
 		c.JSON(422, gin.H{
 			"message": "缺少必要欄位",
+			"error":   err.Error(),
 		})
 
 		return
