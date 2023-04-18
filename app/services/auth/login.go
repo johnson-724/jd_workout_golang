@@ -1,14 +1,28 @@
 package auth
 
 import (
-	"jd_workout_golang/app/services/jwtHelper"
 	"github.com/gin-gonic/gin"
-	"gorm.io/gorm"
 	"golang.org/x/crypto/bcrypt"
-	db "jd_workout_golang/lib/database"
+	"gorm.io/gorm"
 	"jd_workout_golang/app/models"
+	"jd_workout_golang/app/services/jwtHelper"
+	db "jd_workout_golang/lib/database"
 )
 
+// LoginAction logs in a user with the provided email and password,
+// and generates a JWT token for the user.
+//
+// @Summary Login user
+// @Description Logs in a user with the provided email and password, and generates a JWT token for the user
+// @Tags Auth
+// @Accept json
+// @Produce json
+// @Param email formData string true "User email"
+// @Param password formData string true "User password"
+// @Success 200 {string} string "{'message': 'login success', 'token': 'JWT token'}"
+// @Failure 422 {string} string "{'message': '缺少必要欄位', 'error': 'error message'}"
+// @Failure 422 {string} string "{'message': '帳號或密碼錯誤', 'error': 'error message'}"
+// @Router /login [post]
 func LoginAction(c *gin.Context) {
 	loginForm := struct {
 		Email    string `json:"email" form:"email" binding:"required"`

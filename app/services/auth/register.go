@@ -4,8 +4,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
-	db "jd_workout_golang/lib/database"
 	"jd_workout_golang/app/models"
+	db "jd_workout_golang/lib/database"
 )
 
 type registerForm struct {
@@ -14,6 +14,18 @@ type registerForm struct {
 	Email    string `json:"email" form:"email" binding:"required"`
 }
 
+// RegisterAction register API
+// @Summary register
+// @Description user register
+// @Tags Auth
+// @Accept json
+// @Produce json
+// @Param registerForm body registerForm true "registerForm"
+// @Success 200 {string} json "{"message": "register success"}"
+// @Failure 422 {string} json "{"message": "register failed", "error": "register form validation failed"}"
+// @Failure 422 {string} json "{"message": "Email 重複", "error": "duplicate email"}"
+// @Failure 500 {string} json "{"message": "register failed", "error": "server error"}"
+// @Router /register [post]
 func RegisterAction(c *gin.Context) {
 	registerForm := registerForm{}
 	if err := c.ShouldBind(&registerForm); err != nil {
