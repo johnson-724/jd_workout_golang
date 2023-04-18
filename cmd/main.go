@@ -21,9 +21,11 @@ func SetupRouter() *gin.Engine {
 	r.Use(middleware.Cors())
 
 	// 註冊 router group
-	apiGroup := r.Group("/api")
+	apiGroup := r.Group("/api/v1")
 	// 註冊 user router
 	router.RegisterUser(apiGroup)
+
+	router.RegisterEquip(apiGroup)
 
 	return r
 }

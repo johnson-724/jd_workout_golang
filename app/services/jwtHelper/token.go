@@ -20,7 +20,7 @@ func GenerateToken (u *models.User) (string, error) {
 	return token.SignedString([]byte(os.Getenv("APP_KEY")))
 }
 
-func ValidateToken (tokenString string, uid *float64) (string, bool) {
+func ValidateToken (tokenString string, uid *uint) (string, bool) {
 	token, ok := parseToken(tokenString)
 
 	if !ok {
@@ -47,7 +47,7 @@ func ValidateToken (tokenString string, uid *float64) (string, bool) {
 		return err.Error(), false
 	}
 	
-	uidPayload, _ := claims["uid"].(float64)
+	uidPayload, _ := claims["uid"].(uint)
 
 	*uid = uidPayload
 	
