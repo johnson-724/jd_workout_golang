@@ -53,7 +53,7 @@ func LoginAction(c *gin.Context) {
 
 		return
 	}
-	
+
 	token, _ := jwtHelper.GenerateToken(&user)
 
 	c.JSON(200, gin.H{

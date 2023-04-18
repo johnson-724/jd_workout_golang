@@ -31,7 +31,7 @@ func RegisterAction(c *gin.Context) {
 	if err := c.ShouldBind(&registerForm); err != nil {
 		c.JSON(422, gin.H{
 			"message": "register failed",
-			"error": err.Error(),
+			"error":   err.Error(),
 		})
 
 		return
@@ -48,7 +48,7 @@ func RegisterAction(c *gin.Context) {
 	if state := validateRegister(user, db.InitDatabase()); !state {
 		c.JSON(422, gin.H{
 			"message": "Email 重複",
-			"error": "duplicate email",
+			"error":   "duplicate email",
 		})
 
 		return
