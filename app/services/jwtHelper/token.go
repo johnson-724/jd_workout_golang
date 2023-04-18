@@ -47,9 +47,11 @@ func ValidateToken (tokenString string, uid *uint) (string, bool) {
 		return err.Error(), false
 	}
 	
-	uidPayload, _ := claims["uid"].(uint)
+	println(uint(claims["uid"].(float64)))
 
-	*uid = uidPayload
+	uidPayload, _ := claims["uid"].(float64)
+
+	*uid = uint(uidPayload)
 	
 	return "", true
 }
