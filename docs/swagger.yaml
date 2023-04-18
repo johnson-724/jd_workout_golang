@@ -15,6 +15,39 @@ definitions:
 info:
   contact: {}
 paths:
+  /equip:
+    post:
+      consumes:
+      - application/json
+      description: create equip for personal user
+      parameters:
+      - description: equip name
+        in: formData
+        name: name
+        required: true
+        type: string
+      - description: note for equip
+        in: formData
+        name: note
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{''message'': ''create success''}'
+          schema:
+            type: string
+        "403":
+          description: '{''message'': ''jwt token error'', ''error'': ''error message''}'
+          schema:
+            type: string
+        "422":
+          description: '{''message'': ''缺少必要欄位'', ''error'': ''error message''}'
+          schema:
+            type: string
+      summary: create equip
+      tags:
+      - Equip
   /login:
     post:
       consumes:

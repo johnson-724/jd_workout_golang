@@ -8,7 +8,7 @@ import (
 	"jd_workout_golang/app/services/jwtHelper"
 )
 
-var Uid float64
+var Uid uint
 
 func ValidateToken(c *gin.Context) {
 	env.Load()
