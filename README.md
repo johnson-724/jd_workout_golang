@@ -28,3 +28,13 @@ run `go run cmd/test-api.go` in the container.
 
 - down
 `migrate -database "mysql://${username}:${password}@tcp${MYSQL_URL}/${DB_NAME}" -path db/migrations down ${BATCH}`
+
+## Api document
+
+### Generate document
+
+`swag init -g cmd/main.go`
+
+### Check in browser
+
+http://localhost:8080/swagger/index.html
