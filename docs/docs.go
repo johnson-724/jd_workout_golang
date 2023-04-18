@@ -51,8 +51,14 @@ const docTemplate = `{
                             "type": "string"
                         }
                     },
+                    "403": {
+                        "description": "{'message': 'jwt token error', 'error': 'error message'}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
                     "422": {
-                        "description": "{'message': '帳號或密碼錯誤', 'error': 'error message'}",
+                        "description": "{'message': '缺少必要欄位', 'error': 'error message'}",
                         "schema": {
                             "type": "string"
                         }

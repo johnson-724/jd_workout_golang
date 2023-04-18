@@ -39,11 +39,22 @@ func CreateEquip(c *gin.Context) {
 
 	equip := models.Equip{
 		UserId: middleware.Uid,
-		Name:    createBody.Name,
+		Name: createBody.Name,
 		Note: createBody.Note,
 	}
 
-	db.Create(&equip)
+	tx := db.Create(&equip)
+
+	if tx.Error != nil {
+		c.JSON(422, gin.H{
+			"message": "create error",
+			"error":   tx.Error.Error(),
+		})
+
+		c.Abort()
+
+		return
+	}
 
 	c.JSON(200, gin.H{
 		"message": "create success",
