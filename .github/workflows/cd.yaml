@@ -37,4 +37,4 @@ jobs:
           script: |
             export PROCESS_TYPE=cd && cd /app/jd_workout_golang && docker-compose pull && docker-compose up -d
       - name: migrate database
-        run: docker-compose exec -it app /bin/sh -c "./migrate migrate"
+        run: docker-compose exec app /app/migrate migrate
