@@ -22,5 +22,5 @@ func UpCreateEquipTable() {
 func DownCreateEquipTable() {
 	db := database.InitDatabase()
 
-	db.Migrator().DropTable(&User{})
+	db.Migrator().DropTable(&Equip{})
 }
