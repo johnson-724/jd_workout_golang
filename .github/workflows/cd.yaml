@@ -26,7 +26,7 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
           registry: ghcr.io
           dockerfile: ./docker/mysql/DockerfileCI
-      - name: executing remote ssh commands using password
+      - name: Pull image and deploy, and migrate
         uses: appleboy/ssh-action@v0.1.8
         with:
           host: ${{ secrets.DEPLOY_HOST }}
@@ -35,6 +35,8 @@ jobs:
           key: ${{ secrets.DEPLOY_PRIVATE_KEY }}
           port: ${{ secrets.DEPLOY_PORT }}
           script: |
-            export PROCESS_TYPE=cd && cd /app/jd_workout_golang && docker-compose pull && docker-compose up -d
-      - name: migrate database
-        run: docker-compose exec app /app/migrate migrate
+            export PROCESS_TYPE=cd && 
+            cd /app/jd_workout_golang && 
+            docker-compose pull && 
+            docker-compose up -d && 
+            docker-compose exec -T app /app/migrate migrate
