@@ -71,6 +71,120 @@ const docTemplate = `{
                 }
             }
         },
+        "/equip/{id}": {
+            "patch": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "update equip for personal user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Equip"
+                ],
+                "summary": "update equip",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "equip id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "note for equip",
+                        "name": "weights",
+                        "in": "body",
+                        "schema": {
+                            "$ref": "#/definitions/equip.updateFrom"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{'message': 'create success'}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "403": {
+                        "description": "{'message': 'jwt token error', 'error': 'error message'}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "422": {
+                        "description": "{'message': '缺少必要欄位', 'error': 'error message'}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/equip/{id}/weight": {
+            "put": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "update equip weight for personal user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Equip"
+                ],
+                "summary": "update equip weight",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "equip id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "note for equip",
+                        "name": "weights",
+                        "in": "body",
+                        "schema": {
+                            "$ref": "#/definitions/equip.weightForm"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{'message': 'create success'}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "403": {
+                        "description": "{'message': 'jwt token error', 'error': 'error message'}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "422": {
+                        "description": "{'message': '缺少必要欄位', 'error': 'error message'}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/login": {
             "post": {
                 "description": "Logs in a user with the provided email and password, and generates a JWT token for the user",
@@ -180,6 +294,34 @@ const docTemplate = `{
                 },
                 "username": {
                     "type": "string"
+                }
+            }
+        },
+        "equip.updateFrom": {
+            "type": "object",
+            "required": [
+                "name"
+            ],
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "note": {
+                    "type": "string"
+                }
+            }
+        },
+        "equip.weightForm": {
+            "type": "object",
+            "required": [
+                "weights"
+            ],
+            "properties": {
+                "weights": {
+                    "type": "array",
+                    "items": {
+                        "type": "number"
+                    }
                 }
             }
         }

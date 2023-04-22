@@ -12,6 +12,24 @@ definitions:
     - password
     - username
     type: object
+  equip.updateFrom:
+    properties:
+      name:
+        type: string
+      note:
+        type: string
+    required:
+    - name
+    type: object
+  equip.weightForm:
+    properties:
+      weights:
+        items:
+          type: number
+        type: array
+    required:
+    - weights
+    type: object
 info:
   contact: {}
 paths:
@@ -48,6 +66,78 @@ paths:
       security:
       - Bearer: []
       summary: create equip
+      tags:
+      - Equip
+  /equip/{id}:
+    patch:
+      consumes:
+      - application/json
+      description: update equip for personal user
+      parameters:
+      - description: equip id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: note for equip
+        in: body
+        name: weights
+        schema:
+          $ref: '#/definitions/equip.updateFrom'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{''message'': ''create success''}'
+          schema:
+            type: string
+        "403":
+          description: '{''message'': ''jwt token error'', ''error'': ''error message''}'
+          schema:
+            type: string
+        "422":
+          description: '{''message'': ''缺少必要欄位'', ''error'': ''error message''}'
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: update equip
+      tags:
+      - Equip
+  /equip/{id}/weight:
+    put:
+      consumes:
+      - application/json
+      description: update equip weight for personal user
+      parameters:
+      - description: equip id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: note for equip
+        in: body
+        name: weights
+        schema:
+          $ref: '#/definitions/equip.weightForm'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{''message'': ''create success''}'
+          schema:
+            type: string
+        "403":
+          description: '{''message'': ''jwt token error'', ''error'': ''error message''}'
+          schema:
+            type: string
+        "422":
+          description: '{''message'': ''缺少必要欄位'', ''error'': ''error message''}'
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: update equip weight
       tags:
       - Equip
   /login:
