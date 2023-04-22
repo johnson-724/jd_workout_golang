@@ -18,7 +18,7 @@ paths:
   /equip:
     post:
       consumes:
-      - application/json
+      - application/x-www-form-urlencoded
       description: create equip for personal user
       parameters:
       - description: equip name
@@ -45,13 +45,15 @@ paths:
           description: '{''message'': ''缺少必要欄位'', ''error'': ''error message''}'
           schema:
             type: string
+      security:
+      - Bearer: []
       summary: create equip
       tags:
       - Equip
   /login:
     post:
       consumes:
-      - application/json
+      - application/x-www-form-urlencoded
       description: Logs in a user with the provided email and password, and generates
         a JWT token for the user
       parameters:
@@ -109,4 +111,12 @@ paths:
       summary: register
       tags:
       - Auth
+securityDefinitions:
+  Bearer:
+    description: Type Bearer followed by a space and JWT token.
+    in: header
+    name: Authorization
+    scopes:
+      write: ' Grants write access'
+    type: apiKey
 swagger: "2.0"

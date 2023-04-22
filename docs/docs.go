@@ -18,9 +18,14 @@ const docTemplate = `{
     "paths": {
         "/equip": {
             "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
                 "description": "create equip for personal user",
                 "consumes": [
-                    "application/json"
+                    "application/x-www-form-urlencoded"
                 ],
                 "produces": [
                     "application/json"
@@ -70,7 +75,7 @@ const docTemplate = `{
             "post": {
                 "description": "Logs in a user with the provided email and password, and generates a JWT token for the user",
                 "consumes": [
-                    "application/json"
+                    "application/x-www-form-urlencoded"
                 ],
                 "produces": [
                     "application/json"
@@ -176,6 +181,17 @@ const docTemplate = `{
                 "username": {
                     "type": "string"
                 }
+            }
+        }
+    },
+    "securityDefinitions": {
+        "Bearer": {
+            "description": "Type Bearer followed by a space and JWT token.",
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header",
+            "scopes": {
+                "write": " Grants write access"
             }
         }
     }

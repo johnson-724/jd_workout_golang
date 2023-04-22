@@ -12,7 +12,7 @@ import (
 // @Summary create equip
 // @Description create equip for personal user
 // @Tags Equip
-// @Accept json
+// @Accept x-www-form-urlencoded	
 // @Produce json
 // @Param name formData string true "equip name"
 // @Param note formData string false "note for equip"
@@ -20,6 +20,7 @@ import (
 // @Failure 422 {string} string "{'message': '缺少必要欄位', 'error': 'error message'}"
 // @Failure 403 {string} string "{'message': 'jwt token error', 'error': 'error message'}"
 // @Router /equip [post]
+// @Security Bearer
 func CreateEquip(c *gin.Context) {
 	createBody := struct {
 		Name    string `json:"name" form:"name" binding:"required"`
