@@ -72,6 +72,53 @@ const docTemplate = `{
             }
         },
         "/equip/{id}": {
+            "delete": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "delete equip for personal user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Equip"
+                ],
+                "summary": "delete equip",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "equip id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{'message': 'deleted success'}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "403": {
+                        "description": "{'message': 'jwt token error', 'error': 'error message'}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "422": {
+                        "description": "{'message': '缺少必要欄位', 'error': 'error message'}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
             "patch": {
                 "security": [
                     {
