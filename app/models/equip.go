@@ -1,13 +1,9 @@
 package models
 
-import (
-	"gorm.io/gorm"
-)
-
 type Equip struct {
-	gorm.Model
-	UserId  uint
-	Name    string
-	Weights string `gorm:"default:null"`
-	Note    string `gorm:"default:null"`
+	Model
+	UserId  uint  `json:"userId"`
+	Name    string `json:"name"`
+	Weights string `json:"weights" gorm:"default:null"`
+	Note    string `json:"note" gorm:"default:null"`
 }
