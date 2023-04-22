@@ -9,6 +9,11 @@ import (
 	"jd_workout_golang/internal/router"
 )
 
+// @securityDefinitions.apikey Bearer
+// @in header
+// @name Authorization
+// @description Type Bearer followed by a space and JWT token.
+// @scope.write Grants write access
 func main() {
 	r := SetupRouter()
 	docs.SwaggerInfo.BasePath = "/api/v1"

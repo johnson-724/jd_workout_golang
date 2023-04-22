@@ -1,12 +1,12 @@
 package auth
 
 import (
-	"github.com/gin-gonic/gin"
-	"golang.org/x/crypto/bcrypt"
-	"gorm.io/gorm"
 	"jd_workout_golang/app/models"
 	"jd_workout_golang/app/services/jwtHelper"
 	db "jd_workout_golang/lib/database"
+	"github.com/gin-gonic/gin"
+	"golang.org/x/crypto/bcrypt"
+	"gorm.io/gorm"
 )
 
 // LoginAction logs in a user with the provided email and password,
@@ -15,7 +15,7 @@ import (
 // @Summary Login user
 // @Description Logs in a user with the provided email and password, and generates a JWT token for the user
 // @Tags Auth
-// @Accept json
+// @Accept x-www-form-urlencoded	
 // @Produce json
 // @Param email formData string true "User email"
 // @Param password formData string true "User password"
