@@ -1,35 +1,31 @@
 package equip
 
 import (
-	"encoding/json"
-	"fmt"
 	"jd_workout_golang/app/middleware"
-	"jd_workout_golang/app/models"
 	db "jd_workout_golang/lib/database"
 	"strconv"
-
 	"github.com/gin-gonic/gin"
-	"gorm.io/gorm"
 )
 
-type weightForm struct {
-	Weights  []float32 `json:"weights" form:"weights" binding:"required"`
+type updateFrom struct {
+	Name string `json:"name" form:"name" binding:"required"`
+	Note string `json:"note" form:"note"`
 }
 
-// update personal equip weight
-// @Summary update equip weight
-// @Description update equip weight for personal user
+// update personal equip
+// @Summary update equip
+// @Description update equip for personal user
 // @Tags Equip
 // @Accept json
 // @Produce json
 // @Param id path integer true "equip id"
-// @Param weights body weightForm false "note for equip"
+// @Param weights body updateFrom false "note for equip"
 // @Success 200 {string} string "{'message': 'create success'}"
 // @Failure 422 {string} string "{'message': '缺少必要欄位', 'error': 'error message'}"
 // @Failure 403 {string} string "{'message': 'jwt token error', 'error': 'error message'}"
-// @Router /equip/{id}/weight [put]
+// @Router /equip/{id} [patch]
 // @Security Bearer
-func UpdateWeight(c *gin.Context) {
+func UpdateEquip(c *gin.Context) {
 
 	id := c.Param("id")
 	
@@ -45,8 +41,8 @@ func UpdateWeight(c *gin.Context) {
 		return
 	}
 
-	weightForm := weightForm{}
-	if err := c.ShouldBind(&weightForm); err != nil {
+	updateFrom := updateFrom{}
+	if err := c.ShouldBind(&updateFrom); err != nil {
 		c.JSON(422, gin.H{
 			"message": "缺少必要欄位",
 			"error":   err.Error(),
@@ -72,24 +68,12 @@ func UpdateWeight(c *gin.Context) {
 		return
 	}
 
-	json,_ := json.Marshal(&weightForm.Weights)
-	equip.Weights = string(json)
+	equip.Name = updateFrom.Name
+	equip.Note = updateFrom.Note
 
 	db.Save(&equip)
 
 	c.JSON(200, gin.H{
-		"message": "weights updated",
+		"message": "equip updated",
 	})
-}
-
-func getEquip(equipId uint64, uid uint, db *gorm.DB) (*models.Equip, error)  {
-	equip := models.Equip{}
-	
-	result := db.Where("user_id = ?", uid).Where("id = ? ", equipId).First(&equip)
-
-	if result.Error != nil && result.Error == gorm.ErrRecordNotFound {
-		return &models.Equip{}, fmt.Errorf("equip not found : %w", result.Error)
-	}
-
-	return &equip, nil
 }

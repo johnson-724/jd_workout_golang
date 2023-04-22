@@ -71,6 +71,63 @@ const docTemplate = `{
                 }
             }
         },
+        "/equip/{id}": {
+            "patch": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "update equip for personal user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Equip"
+                ],
+                "summary": "update equip",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "equip id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "note for equip",
+                        "name": "weights",
+                        "in": "body",
+                        "schema": {
+                            "$ref": "#/definitions/equip.updateFrom"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{'message': 'create success'}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "403": {
+                        "description": "{'message': 'jwt token error', 'error': 'error message'}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "422": {
+                        "description": "{'message': '缺少必要欄位', 'error': 'error message'}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/equip/{id}/weight": {
             "put": {
                 "security": [
@@ -102,7 +159,7 @@ const docTemplate = `{
                         "name": "weights",
                         "in": "body",
                         "schema": {
-                            "$ref": "#/definitions/equip.updateFrom"
+                            "$ref": "#/definitions/equip.weightForm"
                         }
                     }
                 ],
@@ -241,6 +298,20 @@ const docTemplate = `{
             }
         },
         "equip.updateFrom": {
+            "type": "object",
+            "required": [
+                "name"
+            ],
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "note": {
+                    "type": "string"
+                }
+            }
+        },
+        "equip.weightForm": {
             "type": "object",
             "required": [
                 "weights"
