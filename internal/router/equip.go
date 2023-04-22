@@ -9,6 +9,7 @@ import (
 func RegisterEquip(r *gin.RouterGroup) {
 	equipGroup := r.Group("/equip").Use(auth.ValidateToken)
 
+	equipGroup.GET("/", equipAction.List)
 	equipGroup.POST("/", equipAction.CreateEquip)
 	equipGroup.PUT("/:id/weight", equipAction.UpdateWeight)
 	equipGroup.PATCH("/:id", equipAction.UpdateEquip)
