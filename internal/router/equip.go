@@ -12,4 +12,5 @@ func RegisterEquip(r *gin.RouterGroup) {
 	equipGroup.POST("/", equipAction.CreateEquip)
 	equipGroup.PUT("/:id/weight", equipAction.UpdateWeight)
 	equipGroup.PATCH("/:id", equipAction.UpdateEquip)
+	equipGroup.DELETE("/:id", equipAction.DeleteEquip)
 }
