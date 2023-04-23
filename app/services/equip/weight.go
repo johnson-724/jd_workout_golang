@@ -2,14 +2,10 @@ package equip
 
 import (
 	"encoding/json"
-	"fmt"
 	"jd_workout_golang/app/middleware"
-	"jd_workout_golang/app/models"
-	db "jd_workout_golang/lib/database"
 	"strconv"
-
+	repo "jd_workout_golang/app/repositories/equip"
 	"github.com/gin-gonic/gin"
-	"gorm.io/gorm"
 )
 
 type weightForm struct {
@@ -56,10 +52,8 @@ func UpdateWeight(c *gin.Context) {
 
 		return
 	}
-	
-	db := db.InitDatabase()
 
-	equip, err := getEquip(weightId, middleware.Uid, db)
+	equip, err := repo.GetEquip(weightId, middleware.Uid)
 
 	if err != nil {
 		c.JSON(422, gin.H{
@@ -75,21 +69,9 @@ func UpdateWeight(c *gin.Context) {
 	json,_ := json.Marshal(&weightForm.Weights)
 	equip.Weights = string(json)
 
-	db.Save(&equip)
+	repo.Update(equip)
 
 	c.JSON(200, gin.H{
 		"message": "weights updated",
 	})
-}
-
-func getEquip(equipId uint64, uid uint, db *gorm.DB) (*models.Equip, error)  {
-	equip := models.Equip{}
-	
-	result := db.Where("user_id = ?", uid).Where("id = ? ", equipId).First(&equip)
-
-	if result.Error != nil && result.Error == gorm.ErrRecordNotFound {
-		return &models.Equip{}, fmt.Errorf("equip not found : %w", result.Error)
-	}
-
-	return &equip, nil
 }

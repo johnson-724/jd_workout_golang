@@ -1,10 +1,10 @@
 package equip
 
 import (
-	"jd_workout_golang/app/middleware"
-	db "jd_workout_golang/lib/database"
-	"strconv"
 	"github.com/gin-gonic/gin"
+	"jd_workout_golang/app/middleware"
+	repo "jd_workout_golang/app/repositories/equip"
+	"strconv"
 )
 
 // delete personal equip
@@ -22,9 +22,9 @@ import (
 func DeleteEquip(c *gin.Context) {
 
 	id := c.Param("id")
-	
-	weightId , err:= strconv.ParseUint(id, 10, 32)
-	
+
+	weightId, err := strconv.ParseUint(id, 10, 32)
+
 	if err != nil {
 		c.JSON(422, gin.H{
 			"message": "uri id error",
@@ -34,10 +34,8 @@ func DeleteEquip(c *gin.Context) {
 
 		return
 	}
-	
-	db := db.InitDatabase()
 
-	equip, err := getEquip(weightId, middleware.Uid, db)
+	equip, err := repo.GetEquip(weightId, middleware.Uid)
 
 	if err != nil {
 		c.JSON(422, gin.H{
@@ -50,7 +48,7 @@ func DeleteEquip(c *gin.Context) {
 		return
 	}
 
-	db.Delete(&equip)
+	repo.Delete(equip)
 
 	c.JSON(200, gin.H{
 		"message": "equip deleted",

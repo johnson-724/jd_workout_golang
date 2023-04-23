@@ -2,7 +2,7 @@ package equip
 
 import (
 	"jd_workout_golang/app/middleware"
-	db "jd_workout_golang/lib/database"
+	repo "jd_workout_golang/app/repositories/equip"
 	"strconv"
 	"github.com/gin-gonic/gin"
 )
@@ -53,9 +53,7 @@ func UpdateEquip(c *gin.Context) {
 		return
 	}
 	
-	db := db.InitDatabase()
-
-	equip, err := getEquip(weightId, middleware.Uid, db)
+	equip, err := repo.GetEquip(weightId, middleware.Uid)
 
 	if err != nil {
 		c.JSON(422, gin.H{
@@ -71,7 +69,7 @@ func UpdateEquip(c *gin.Context) {
 	equip.Name = updateFrom.Name
 	equip.Note = updateFrom.Note
 
-	db.Save(&equip)
+	repo.Update(equip)
 
 	c.JSON(200, gin.H{
 		"message": "equip updated",

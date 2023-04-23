@@ -22,6 +22,8 @@ definitions:
         type: array
       perPage:
         type: integer
+      total:
+        type: integer
     type: object
   equip.updateFrom:
     properties:
@@ -111,7 +113,7 @@ paths:
       - application/json
       responses:
         "200":
-          description: '{''message'': ''create success''}'
+          description: '{''message'': ''create success'', ''id'' : ''1''}'
           schema:
             type: string
         "403":

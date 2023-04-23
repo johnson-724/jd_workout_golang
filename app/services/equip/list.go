@@ -1,13 +1,10 @@
 package equip
 
 import (
-	"fmt"
+	"github.com/gin-gonic/gin"
 	"jd_workout_golang/app/middleware"
 	"jd_workout_golang/app/models"
-	db "jd_workout_golang/lib/database"
-
-	"github.com/gin-gonic/gin"
-	"gorm.io/gorm"
+	repo "jd_workout_golang/app/repositories/equip"
 )
 
 type equipListRequest struct {
@@ -19,6 +16,7 @@ type equipListResponse struct {
 	Page    int            `json:"currentPage" form:"currentPage"`
 	PerPage int            `json:"perPage" form:"perPage"`
 	Data    []models.Equip `json:"data"`
+	Total   int64          `json:"total"`
 }
 
 // get personal equip list
@@ -48,16 +46,17 @@ func List(c *gin.Context) {
 		return
 	}
 
-	db := db.InitDatabase()
+	paginateCondition := repo.PaginateCondition{
+		Page:    paginate.Page,
+		PerPage: paginate.PerPage,
+	}
 
-	data, err := getEqupis(paginate, middleware.Uid, db)
-
-	fmt.Println("test")
+	data, count, err := repo.GetEqupis(paginateCondition, middleware.Uid)
 
 	if err != nil {
 		c.JSON(422, gin.H{
 			"message": "get equip list error",
-			"error":  err.Error(),
+			"error":   err.Error(),
 		})
 
 		c.Abort()
@@ -65,30 +64,10 @@ func List(c *gin.Context) {
 		return
 	}
 
-	c.JSON(200, data)
-}
-
-func getEqupis(equipListRequest equipListRequest, uid uint, db *gorm.DB) (*equipListResponse, error) {
-	data := []models.Equip{}
-
-	result := db.Where("user_id = ?", uid).Order("name asc").Scopes(Paginate(equipListRequest.Page, equipListRequest.PerPage)).Find(&data)
-
-	if result.Error != nil {
-		return nil, result.Error
-	}
-
-	return &equipListResponse{
-		Page:    equipListRequest.Page,
-		PerPage: equipListRequest.PerPage,
-		Data:    data,
-	}, nil
-}
-
-func Paginate(currentPage int, perPage int) func(db *gorm.DB) *gorm.DB {
-	return func(db *gorm.DB) *gorm.DB {
-		fmt.Printf("currentPage: %d, perPage: %d", currentPage, perPage)
-		offset := (currentPage - 1) * perPage
-
-		return db.Offset(offset).Limit(perPage)
-	}
+	c.JSON(200, equipListResponse{
+		Page:    paginate.Page,
+		PerPage: paginate.PerPage,
+		Data:    *data,
+		Total:   *count,
+	})
 }

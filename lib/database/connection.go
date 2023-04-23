@@ -5,6 +5,12 @@ import (
 	"gorm.io/gorm"
 )
 
+var Connection *gorm.DB
+
+func init(){
+	Connection = InitDatabase()
+}
+
 // InitDatabase 初始化資料庫連線
 // 後續改 singlton
 func InitDatabase() *gorm.DB {
