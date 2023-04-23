@@ -48,9 +48,9 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "{'message': 'create success'}",
+                        "description": "OK",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/equip.equipListResponse"
                         }
                     },
                     "403": {
@@ -394,6 +394,23 @@ const docTemplate = `{
                 }
             }
         },
+        "equip.equipListResponse": {
+            "type": "object",
+            "properties": {
+                "currentPage": {
+                    "type": "integer"
+                },
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Equip"
+                    }
+                },
+                "perPage": {
+                    "type": "integer"
+                }
+            }
+        },
         "equip.updateFrom": {
             "type": "object",
             "required": [
@@ -421,6 +438,32 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "models.Equip": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "note": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "string"
+                },
+                "userId": {
+                    "type": "integer"
+                },
+                "weights": {
+                    "type": "string"
+                }
+            }
         }
     },
     "securityDefinitions": {
@@ -446,6 +489,8 @@ var SwaggerInfo = &swag.Spec{
 	Description:      "",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
+	LeftDelim:        "{{",
+	RightDelim:       "}}",
 }
 
 func init() {

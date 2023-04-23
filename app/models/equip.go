@@ -1,7 +1,7 @@
 package models
 
 type Equip struct {
-	Model
+	baseModel
 	UserId  uint  `json:"userId"`
 	Name    string `json:"name"`
 	Weights string `json:"weights" gorm:"default:null"`

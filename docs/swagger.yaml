@@ -12,6 +12,17 @@ definitions:
     - password
     - username
     type: object
+  equip.equipListResponse:
+    properties:
+      currentPage:
+        type: integer
+      data:
+        items:
+          $ref: '#/definitions/models.Equip'
+        type: array
+      perPage:
+        type: integer
+    type: object
   equip.updateFrom:
     properties:
       name:
@@ -29,6 +40,23 @@ definitions:
         type: array
     required:
     - weights
+    type: object
+  models.Equip:
+    properties:
+      createdAt:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      note:
+        type: string
+      updatedAt:
+        type: string
+      userId:
+        type: integer
+      weights:
+        type: string
     type: object
 info:
   contact: {}
@@ -49,9 +77,9 @@ paths:
       - application/json
       responses:
         "200":
-          description: '{''message'': ''create success''}'
+          description: OK
           schema:
-            type: string
+            $ref: '#/definitions/equip.equipListResponse'
         "403":
           description: '{''message'': ''jwt token error'', ''error'': ''error message''}'
           schema:

@@ -28,7 +28,7 @@ type equipListResponse struct {
 // @Accept x-www-form-urlencoded
 // @Produce json
 // @Param equipList query equipListRequest true "equipList"
-// @Success 200 {string} string "{'message': 'create success'}"
+// @Success 200 {object} equipListResponse
 // @Failure 422 {string} string "{'message': '缺少必要欄位', 'error': 'error message'}"
 // @Failure 403 {string} string "{'message': 'jwt token error', 'error': 'error message'}"
 // @Router /equip [get]
