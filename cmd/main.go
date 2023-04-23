@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
+	env "github.com/joho/godotenv"
 	swaggerfiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"jd_workout_golang/app/middleware"
@@ -15,6 +16,7 @@ import (
 // @description Type Bearer followed by a space and JWT token.
 // @scope.write Grants write access
 func main() {
+	env.Load()
 	r := SetupRouter()
 	docs.SwaggerInfo.BasePath = "/api/v1"
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))

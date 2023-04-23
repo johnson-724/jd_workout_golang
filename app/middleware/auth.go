@@ -2,17 +2,14 @@ package middleware
 
 import (
 	"fmt"
-	"net/http"
 	"github.com/gin-gonic/gin"
-	env "github.com/joho/godotenv"
 	"jd_workout_golang/app/services/jwtHelper"
+	"net/http"
 )
 
 var Uid uint
 
 func ValidateToken(c *gin.Context) {
-	env.Load()
-
 	val := c.GetHeader("Authorization")
 
 	if val == "" {
