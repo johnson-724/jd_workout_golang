@@ -101,7 +101,7 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "{'message': 'create success'}",
+                        "description": "{'message': 'create success', 'id' : '1'}",
                         "schema": {
                             "type": "string"
                         }
@@ -407,6 +407,9 @@ const docTemplate = `{
                     }
                 },
                 "perPage": {
+                    "type": "integer"
+                },
+                "total": {
                     "type": "integer"
                 }
             }

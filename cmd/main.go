@@ -1,17 +1,18 @@
 package main
 
 import (
-	"github.com/getsentry/sentry-go"
-	"github.com/gin-gonic/gin"
-	env "github.com/joho/godotenv"
-	swaggerfiles "github.com/swaggo/files"
-	ginSwagger "github.com/swaggo/gin-swagger"
 	"jd_workout_golang/app/middleware"
 	docs "jd_workout_golang/docs"
 	"jd_workout_golang/internal/router"
+	"jd_workout_golang/lib/database"
+	"jd_workout_golang/lib/file"
 	"log"
 	"os"
 	"time"
+	"github.com/getsentry/sentry-go"
+	"github.com/gin-gonic/gin"
+	swaggerfiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 // @securityDefinitions.apikey Bearer
@@ -20,8 +21,6 @@ import (
 // @description Type Bearer followed by a space and JWT token.
 // @scope.write Grants write access
 func main() {
-	env.Load()
-
 	sentryDsn := os.Getenv("SENTRY_DSN")
 	if sentryDsn != "" {
 		err := sentry.Init(sentry.ClientOptions{
@@ -42,6 +41,11 @@ func main() {
 	docs.SwaggerInfo.BasePath = "/api/v1"
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 	r.Run(":80") // listen and serve on
+}
+
+func init() {
+	file.LoadConfigAndEnv()
+	database.InitDatabase()
 }
 
 func SetupRouter() *gin.Engine {

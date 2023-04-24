@@ -38,14 +38,12 @@ func LoginAction(c *gin.Context) {
 		return
 	}
 
-	db := db.InitDatabase()
-
 	user := models.User{
 		Email:    loginForm.Email,
 		Password: loginForm.Password,
 	}
 
-	if _, err := validateLogin(&user, db); err != nil {
+	if _, err := validateLogin(&user, db.Connection); err != nil {
 		c.JSON(422, gin.H{
 			"message": "帳號或密碼錯誤",
 			"error":   err.Error(),
