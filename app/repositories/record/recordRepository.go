@@ -17,6 +17,16 @@ func Create(record *models.Record) (uint, error) {
 	return record.ID, nil
 }
 
+func Delete(record *models.Record) error {
+	result := db.Connection.Delete(record)
+
+	if result.Error != nil {
+		return result.Error
+	}
+
+	return nil
+}
+
 func Update(record *models.Record) error {
 	result := db.Connection.Save(record)
 

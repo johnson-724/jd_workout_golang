@@ -325,6 +325,36 @@ paths:
       tags:
       - Record
   /record/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: delete record
+      parameters:
+      - description: record id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{''message'': ''delete success''}'
+          schema:
+            type: string
+        "403":
+          description: '{''message'': ''jwt token error'', ''error'': ''error message''}'
+          schema:
+            type: string
+        "422":
+          description: '{''message'': ''缺少必要欄位'', ''error'': ''error message''}'
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: delete record
+      tags:
+      - Record
     put:
       consumes:
       - application/json
