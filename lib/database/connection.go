@@ -3,6 +3,7 @@ package database
 import (
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
+	"os"
 )
 
 var Connection *gorm.DB
@@ -16,7 +17,7 @@ func init(){
 func InitDatabase() *gorm.DB {
 	db, err := gorm.Open(
 		mysql.New(mysql.Config{
-			DSN: "root:root@tcp(mysql:3306)/jd_workout?charset=utf8mb4&parseTime=True&loc=Local",
+			DSN: os.Getenv("DB_HOST"),
 		}),
 		&gorm.Config{},
 	)
