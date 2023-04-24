@@ -3,6 +3,7 @@ package record
 import (
 	"fmt"
 	"jd_workout_golang/app/models"
+	pageinate "jd_workout_golang/app/repositories/pageinate"
 	db "jd_workout_golang/lib/database"
 	"gorm.io/gorm"
 )
@@ -47,4 +48,21 @@ func GetRecord(recordId uint64, uid uint) (*models.Record, error) {
 	}
 
 	return &record, nil
+}
+
+func GetRecords(page pageinate.PaginateCondition, uid uint) (*[]models.Record, *int64, error) {
+	data := []models.Record{}
+	count := int64(0)
+
+	query := db.Connection.Model(models.Record{}).Where("user_id = ?", uid)
+
+	query.Count(&count)
+
+	result := query.Preload("Equips").Order("created_at desc").Scopes(pageinate.Paginate(page.Page, page.PerPage)).Find(&data)	
+
+	if result.Error != nil {
+		return nil, &count, result.Error
+	}
+
+	return &data, &count, nil
 }
