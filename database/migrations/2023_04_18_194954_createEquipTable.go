@@ -14,13 +14,9 @@ type Equip struct {
 }
 
 func UpCreateEquipTable() {
-	db := database.InitDatabase()
-
-	db.Migrator().CreateTable(&Equip{})
+	database.Connection.Migrator().CreateTable(&Equip{})
 }
 
 func DownCreateEquipTable() {
-	db := database.InitDatabase()
-
-	db.Migrator().DropTable(&Equip{})
+	database.Connection.Migrator().DropTable(&Equip{})
 }

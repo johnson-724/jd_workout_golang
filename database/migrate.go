@@ -3,18 +3,22 @@ package main
 import (
 	"flag"
 	"fmt"
-	migrate "github.com/govel-golang-migration/govel-golang-migration"
-	"github.com/joho/godotenv"
+	"jd_workout_golang/lib/database"
 	"jd_workout_golang/lib/file"
 	"os"
 	"strconv"
 	"strings"
+	migrate "github.com/govel-golang-migration/govel-golang-migration"
 )
 
 func main() {
 	flag.Parse()
 
 	method := flag.Arg(0)
+
+	file.LoadConfigAndEnv()
+
+	database.InitDatabase()
 
 	dispatch(method)
 }
@@ -24,8 +28,6 @@ var rebuild = false
 
 func dispatch(method string) {
 	fmt.Printf("dispatch %s method \n", method)
-
-	loadEnv()
 	
 	rebuild, _ := strconv.ParseBool(os.Getenv("REBUILD"))
 
@@ -65,13 +67,5 @@ func dispatch(method string) {
 		migrate.Rollback(stage, os.Getenv("DB_HOST"), migrationPath, rebuild)
 	default:
 		fmt.Println("method not support")
-	}
-}
-
-func loadEnv() {
-	path := file.AccessFromCurrentDir(".env")
-
-	if err := godotenv.Load(path); err != nil {
-		panic(err)
 	}
 }

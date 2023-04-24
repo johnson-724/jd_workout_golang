@@ -13,13 +13,9 @@ type User struct {
 }
 
 func UpCreateUsersTable() {
-	db := database.InitDatabase()
-
-	db.Migrator().CreateTable(&User{})
+	database.Connection.Migrator().CreateTable(&User{})
 }
 
 func DownCreateUsersTable() {
-	db := database.InitDatabase()
-
-	db.Migrator().DropTable(&User{})
+	database.Connection.Migrator().DropTable(&User{})
 }
