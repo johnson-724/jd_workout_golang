@@ -59,5 +59,7 @@ func SetupRouter() *gin.Engine {
 
 	router.RegisterEquip(apiGroup)
 
+	router.RegisterRecord(apiGroup)
+
 	return r
 }

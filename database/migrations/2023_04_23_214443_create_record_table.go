@@ -16,13 +16,9 @@ type Record struct {
 }
 
 func UpCreateRecordTable() {
-	db := database.InitDatabase()
-
-	db.Migrator().CreateTable(&Record{})
+	database.Connection.Migrator().CreateTable(&Record{})
 }
 
 func DownCreateRecordTable() {
-	db := database.InitDatabase()
-
-	db.Migrator().DropTable(&Record{})
+	database.Connection.Migrator().DropTable(&Record{})
 }

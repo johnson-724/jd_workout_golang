@@ -60,6 +60,21 @@ definitions:
       weights:
         type: string
     type: object
+  record.createBody:
+    properties:
+      equip_id:
+        type: integer
+      note:
+        type: string
+      reps:
+        type: integer
+      weight:
+        type: number
+    required:
+    - equip_id
+    - reps
+    - weight
+    type: object
 info:
   contact: {}
 paths:
@@ -262,6 +277,38 @@ paths:
       summary: Login user
       tags:
       - Auth
+  /record:
+    post:
+      consumes:
+      - application/json
+      description: create record
+      parameters:
+      - description: createBody
+        in: body
+        name: createBody
+        required: true
+        schema:
+          $ref: '#/definitions/record.createBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{''message'': ''create success'', ''id'' : ''1''}'
+          schema:
+            type: string
+        "403":
+          description: '{''message'': ''jwt token error'', ''error'': ''error message''}'
+          schema:
+            type: string
+        "422":
+          description: '{''message'': ''缺少必要欄位'', ''error'': ''error message''}'
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: create record
+      tags:
+      - Record
   /register:
     post:
       consumes:

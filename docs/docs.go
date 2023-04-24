@@ -327,6 +327,57 @@ const docTemplate = `{
                 }
             }
         },
+        "/record": {
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "create record",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Record"
+                ],
+                "summary": "create record",
+                "parameters": [
+                    {
+                        "description": "createBody",
+                        "name": "createBody",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/record.createBody"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{'message': 'create success', 'id' : '1'}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "403": {
+                        "description": "{'message': 'jwt token error', 'error': 'error message'}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "422": {
+                        "description": "{'message': '缺少必要欄位', 'error': 'error message'}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/register": {
             "post": {
                 "description": "user register",
@@ -465,6 +516,28 @@ const docTemplate = `{
                 },
                 "weights": {
                     "type": "string"
+                }
+            }
+        },
+        "record.createBody": {
+            "type": "object",
+            "required": [
+                "equip_id",
+                "reps",
+                "weight"
+            ],
+            "properties": {
+                "equip_id": {
+                    "type": "integer"
+                },
+                "note": {
+                    "type": "string"
+                },
+                "reps": {
+                    "type": "integer"
+                },
+                "weight": {
+                    "type": "number"
                 }
             }
         }
