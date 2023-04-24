@@ -8,13 +8,9 @@ import (
 
 var Connection *gorm.DB
 
-func init(){
-	Connection = InitDatabase()
-}
-
 // InitDatabase 初始化資料庫連線
 // 後續改 singlton
-func InitDatabase() *gorm.DB {
+func InitDatabase() {
 	db, err := gorm.Open(
 		mysql.New(mysql.Config{
 			DSN: os.Getenv("DB_HOST"),
@@ -26,5 +22,5 @@ func InitDatabase() *gorm.DB {
 		panic(err)
 	}
 
-	return db
+	Connection = db
 }

@@ -45,7 +45,7 @@ func RegisterAction(c *gin.Context) {
 		Password: string(hash),
 	}
 
-	if state := validateRegister(user, db.InitDatabase()); !state {
+	if state := validateRegister(user, db.Connection); !state {
 		c.JSON(422, gin.H{
 			"message": "Email 重複",
 			"error":   "duplicate email",
@@ -54,9 +54,7 @@ func RegisterAction(c *gin.Context) {
 		return
 	}
 
-	db := db.InitDatabase()
-
-	storeUser(user, db)
+	storeUser(user, db.Connection)
 
 	c.JSON(200, gin.H{
 		"message": "register success",
