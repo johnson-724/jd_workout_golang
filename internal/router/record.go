@@ -10,4 +10,5 @@ func RegisterRecord(r *gin.RouterGroup) {
 	equipGroup := r.Group("/record").Use(auth.ValidateToken)
 
 	equipGroup.POST("/", recordAction.CreateRecord)
+	equipGroup.PUT("/:id", recordAction.UpdateRecord)
 }

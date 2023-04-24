@@ -75,6 +75,21 @@ definitions:
     - reps
     - weight
     type: object
+  record.updateBody:
+    properties:
+      equip_id:
+        type: integer
+      note:
+        type: string
+      reps:
+        type: integer
+      weight:
+        type: number
+    required:
+    - equip_id
+    - reps
+    - weight
+    type: object
 info:
   contact: {}
 paths:
@@ -307,6 +322,43 @@ paths:
       security:
       - Bearer: []
       summary: create record
+      tags:
+      - Record
+  /record/{id}:
+    put:
+      consumes:
+      - application/json
+      description: update record
+      parameters:
+      - description: record id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: updateBody
+        in: body
+        name: updateBody
+        required: true
+        schema:
+          $ref: '#/definitions/record.updateBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{''message'': ''update success'', ''id'' : ''1''}'
+          schema:
+            type: string
+        "403":
+          description: '{''message'': ''jwt token error'', ''error'': ''error message''}'
+          schema:
+            type: string
+        "422":
+          description: '{''message'': ''缺少必要欄位'', ''error'': ''error message''}'
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: update record
       tags:
       - Record
   /register:

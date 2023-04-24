@@ -378,6 +378,64 @@ const docTemplate = `{
                 }
             }
         },
+        "/record/{id}": {
+            "put": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "update record",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Record"
+                ],
+                "summary": "update record",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "record id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "updateBody",
+                        "name": "updateBody",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/record.updateBody"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{'message': 'update success', 'id' : '1'}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "403": {
+                        "description": "{'message': 'jwt token error', 'error': 'error message'}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "422": {
+                        "description": "{'message': '缺少必要欄位', 'error': 'error message'}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/register": {
             "post": {
                 "description": "user register",
@@ -520,6 +578,28 @@ const docTemplate = `{
             }
         },
         "record.createBody": {
+            "type": "object",
+            "required": [
+                "equip_id",
+                "reps",
+                "weight"
+            ],
+            "properties": {
+                "equip_id": {
+                    "type": "integer"
+                },
+                "note": {
+                    "type": "string"
+                },
+                "reps": {
+                    "type": "integer"
+                },
+                "weight": {
+                    "type": "number"
+                }
+            }
+        },
+        "record.updateBody": {
             "type": "object",
             "required": [
                 "equip_id",
