@@ -2,6 +2,10 @@
 
 http://52.192.216.234:6003/swagger/index.html
 
+## Sentry
+
+http://52.192.216.234:6002/
+
 ## Run docker
 
 * `docker-compose build`
