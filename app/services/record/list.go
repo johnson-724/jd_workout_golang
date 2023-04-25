@@ -2,7 +2,8 @@ package record
 
 import (
 	"jd_workout_golang/app/middleware"
-	"jd_workout_golang/app/models"
+	// "strconv"
+	// "jd_workout_golang/app/models"
 	"jd_workout_golang/app/repositories/pageinate"
 	repo "jd_workout_golang/app/repositories/record"
 	"time"
@@ -18,14 +19,14 @@ type recordListRequest struct {
 type recordListResponse struct {
 	Page    int             `json:"currentPage" form:"currentPage"`
 	PerPage int             `json:"perPage" form:"perPage"`
-	Data    []models.Record `json:"data"`
+	Data    map[string]interface{} `json:"data"`
 	Total   int64           `json:"total"`
 }
 
 // get personal record list
 // @Summary record list
 // @Description record list for personal user
-// @Tags Equip
+// @Tags Record
 // @Accept x-www-form-urlencoded
 // @Produce json
 // @Param equipList query recordListRequest true "equipList"
@@ -67,10 +68,12 @@ func List(c *gin.Context) {
 		return
 	}
 
+	groupByData := groupBy(*data)
+
 	c.JSON(200, recordListResponse{
 		Page:    paginate.Page,
 		PerPage: paginate.PerPage,
-		Data:    *data,
+		Data:    *groupByData,
 		Total:   *count,
 	})
 }
@@ -79,14 +82,14 @@ type dateGroup struct {
 	Date   string
 	Start  time.Time
 	End    time.Time
-	Equips map[string]equipGroup
+	Equips map[int]equipGroup
 }
 
 type equipGroup struct {
 	ID      uint
 	Name    string
 	Note    string
-	Records map[string]recordDetail
+	Records map[int]recordDetail
 }
 
 type recordDetail struct {
@@ -97,21 +100,40 @@ type recordDetail struct {
 	Note   []string
 }
 
-func groupBy(data []models.Record) {
+func groupBy(data []repo.RecordByDate) *map[string]interface{} {
 	group := make(map[string]interface{})
 	for _, v := range data {
-		if _, ok := group[v.CreatedAt.Format("2006-01-02")]; !ok {
-			equipGroup := make(map[string]equipGroup)
+		if _, ok := group[v.Date]; !ok {
+			equipGroupMap := make(map[int]equipGroup)
 			// recordGroup := make(map[string]recordDetail)
-
-			group[v.CreatedAt.Format("2006-01-02")] = &dateGroup{
-				Date:   v.CreatedAt.Format("2006-01-02"),
-				Start:  v.CreatedAt,
-				End:    v.CreatedAt,
-				Equips: equipGroup,
+			group[v.Date] = &dateGroup{
+				Date:  v.Date,
+				Start: v.CreatedAt,
+				End:   v.CreatedAt,
+				Equips: equipGroupMap,
 			}
 		}
 
+		if _, ok := group[v.Date].(*dateGroup).Equips[int(v.EquipId)]; !ok {
+			recordGroupMap := make(map[int]recordDetail)
+			group[v.Date].(*dateGroup).Equips[int(v.EquipId)] = equipGroup{
+				ID:      v.EquipId,
+				Name:    v.Name,
+				Note:    v.Note,
+				Records: recordGroupMap,
+			}
+		}
+
+		group[v.Date].(*dateGroup).Start = v.CreatedAt
+		group[v.Date].(*dateGroup).Equips[int(v.EquipId)].Records[int(v.ID)] = recordDetail{
+			ID:     v.ID,
+			Weight: float64(v.Weight),
+			Reps:   int(v.Reps),
+			Sets:   float64(v.Weight) * float64(v.Reps),
+			Note:   []string{v.Note},
+		}
 
 	}
+
+	return &group
 }

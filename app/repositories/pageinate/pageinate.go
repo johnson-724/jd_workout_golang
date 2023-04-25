@@ -1,7 +1,6 @@
 package pageinate
 
 import (
-	"fmt"
 	"gorm.io/gorm"
 )
 
