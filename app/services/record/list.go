@@ -2,6 +2,7 @@ package record
 
 import (
 	"jd_workout_golang/app/middleware"
+	"strconv"
 	// "strconv"
 	// "jd_workout_golang/app/models"
 	"jd_workout_golang/app/repositories/pageinate"
@@ -17,10 +18,10 @@ type recordListRequest struct {
 }
 
 type recordListResponse struct {
-	Page    int             `json:"currentPage" form:"currentPage"`
-	PerPage int             `json:"perPage" form:"perPage"`
-	Data    map[string]interface{} `json:"data"`
-	Total   int64           `json:"total"`
+	Page    int                    `json:"currentPage" form:"currentPage"`
+	PerPage int                    `json:"perPage" form:"perPage"`
+	Data    map[string]*dateGroup `json:"data"`
+	Total   int64                  `json:"total"`
 }
 
 // get personal record list
@@ -69,54 +70,56 @@ func List(c *gin.Context) {
 	}
 
 	groupByData := groupBy(*data)
+	ptr := &groupByData
+	group := *ptr
 
 	c.JSON(200, recordListResponse{
 		Page:    paginate.Page,
 		PerPage: paginate.PerPage,
-		Data:    *groupByData,
+		Data:    group,
 		Total:   *count,
 	})
 }
 
 type dateGroup struct {
-	Date   string
-	Start  time.Time
-	End    time.Time
-	Equips map[int]equipGroup
+	Date   string `json:"date"`
+	Start  time.Time `json:"start`
+	End    time.Time `json:"end`
+	Equips map[int]equipGroup `json:"equips"`
 }
 
 type equipGroup struct {
-	ID      uint
-	Name    string
-	Note    string
-	Records map[int]recordDetail
+	ID      uint `json:"id"`
+	Name    string `json:"name"`
+	Note    string `json:"note"`
+	Records map[string]recordDetail `json:"records"`
 }
 
 type recordDetail struct {
-	ID     uint
-	Weight float64
-	Reps   int
-	Sets   float64 // Weight * Reps * Count
-	Note   []string
+	ID     uint `json:"id"`
+	Weight float64 `json:"weight"`
+	Reps   int `json:"reps"`
+	Sets   float64 `json:sets` // Weight * Reps * Count
+	Note   []string `json:"note"`
 }
 
-func groupBy(data []repo.RecordByDate) *map[string]interface{} {
-	group := make(map[string]interface{})
+func groupBy(data []repo.RecordByDate) map[string]*dateGroup {
+	group := make(map[string]*dateGroup)
 	for _, v := range data {
 		if _, ok := group[v.Date]; !ok {
 			equipGroupMap := make(map[int]equipGroup)
-			// recordGroup := make(map[string]recordDetail)
 			group[v.Date] = &dateGroup{
-				Date:  v.Date,
-				Start: v.CreatedAt,
-				End:   v.CreatedAt,
+				Date:   v.Date,
+				Start:  v.CreatedAt,
+				End:    v.CreatedAt,
 				Equips: equipGroupMap,
 			}
 		}
 
-		if _, ok := group[v.Date].(*dateGroup).Equips[int(v.EquipId)]; !ok {
-			recordGroupMap := make(map[int]recordDetail)
-			group[v.Date].(*dateGroup).Equips[int(v.EquipId)] = equipGroup{
+		recordGroupMap := make(map[string]recordDetail)
+
+		if _, ok := (*group[v.Date]).Equips[int(v.EquipId)]; !ok {
+			(*group[v.Date]).Equips[int(v.EquipId)] = equipGroup{
 				ID:      v.EquipId,
 				Name:    v.Name,
 				Note:    v.Note,
@@ -124,16 +127,25 @@ func groupBy(data []repo.RecordByDate) *map[string]interface{} {
 			}
 		}
 
-		group[v.Date].(*dateGroup).Start = v.CreatedAt
-		group[v.Date].(*dateGroup).Equips[int(v.EquipId)].Records[int(v.ID)] = recordDetail{
-			ID:     v.ID,
-			Weight: float64(v.Weight),
-			Reps:   int(v.Reps),
-			Sets:   float64(v.Weight) * float64(v.Reps),
-			Note:   []string{v.Note},
+		setsKey := strconv.FormatFloat(float64(v.Weight), 'E', -1, 64) + "-" + strconv.Itoa(int(v.Reps))
+
+		(*group[v.Date]).Start = v.CreatedAt
+
+		if _, ok := (*group[v.Date]).Equips[int(v.EquipId)].Records[setsKey]; !ok {
+			(*group[v.Date]).Equips[int(v.EquipId)].Records[setsKey] = recordDetail{
+				ID:     v.ID,
+				Weight: float64(v.Weight),
+				Reps:   int(v.Reps),
+				Sets:   0,
+				Note:   make([]string, 0),
+			}
 		}
 
+		record := (*group[v.Date]).Equips[int(v.EquipId)].Records[setsKey]
+		record.Sets+=1
+		record.Note = append(record.Note, v.Note)
+		(*group[v.Date]).Equips[int(v.EquipId)].Records[setsKey] = record
 	}
 
-	return &group
+	return group
 }
