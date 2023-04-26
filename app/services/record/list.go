@@ -97,9 +97,9 @@ type equipGroup struct {
 
 type recordDetail struct {
 	ID     uint `json:"id"`
-	Weight float64 `json:"weight"`
+	Weight float32 `json:"weight"`
 	Reps   int `json:"reps"`
-	Sets   float64 `json:sets` // Weight * Reps * Count
+	Sets   float32 `json:sets` // Weight * Reps * Count
 	Note   []string `json:"note"`
 }
 
@@ -134,7 +134,7 @@ func groupBy(data []repo.RecordByDate) map[string]*dateGroup {
 		if _, ok := (*group[v.Date]).Equips[int(v.EquipId)].Records[setsKey]; !ok {
 			(*group[v.Date]).Equips[int(v.EquipId)].Records[setsKey] = recordDetail{
 				ID:     v.ID,
-				Weight: float64(v.Weight),
+				Weight: v.Weight,
 				Reps:   int(v.Reps),
 				Sets:   0,
 				Note:   make([]string, 0),
