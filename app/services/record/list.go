@@ -18,10 +18,10 @@ type recordListRequest struct {
 }
 
 type recordListResponse struct {
-	Page    int                    `json:"currentPage" form:"currentPage"`
-	PerPage int                    `json:"perPage" form:"perPage"`
-	Data    map[string]*dateGroup `json:"data"`
-	Total   int64                  `json:"total"`
+	Page    int         `json:"currentPage" form:"currentPage"`
+	PerPage int         `json:"perPage" form:"perPage"`
+	Data    []dateGroup `json:"data"`
+	Total   int64       `json:"total"`
 }
 
 // get personal record list
@@ -69,82 +69,88 @@ func List(c *gin.Context) {
 		return
 	}
 
-	groupByData := groupBy(*data)
-	ptr := &groupByData
-	group := *ptr
+	groupByData := groupByRecord(*data)
 
 	c.JSON(200, recordListResponse{
 		Page:    paginate.Page,
 		PerPage: paginate.PerPage,
-		Data:    group,
+		Data:    groupByData,
 		Total:   *count,
 	})
 }
 
 type dateGroup struct {
-	Date   string `json:"date"`
-	Start  time.Time `json:"start`
-	End    time.Time `json:"end`
-	Equips map[int]equipGroup `json:"equips"`
+	Date   string       `json:"date"`
+	Start  time.Time    `json:"start"`
+	End    time.Time    `json:"end"`
+	Equips []equipGroup `json:"equips"`
 }
 
 type equipGroup struct {
-	ID      uint `json:"id"`
-	Name    string `json:"name"`
-	Note    string `json:"note"`
-	Records map[string]recordDetail `json:"records"`
+	ID      uint           `json:"id"`
+	Name    string         `json:"name"`
+	Note    string         `json:"note"`
+	Records []recordDetail `json:"records"`
 }
 
 type recordDetail struct {
-	ID     uint `json:"id"`
-	Weight float32 `json:"weight"`
-	Reps   int `json:"reps"`
-	Sets   float32 `json:sets` // Weight * Reps * Count
+	IDS     []uint     `json:"ids"`
+	Weight float32  `json:"weight"`
+	Reps   int      `json:"reps"`
+	Sets   int      `json:"sets"`
 	Note   []string `json:"note"`
 }
 
-func groupBy(data []repo.RecordByDate) map[string]*dateGroup {
-	group := make(map[string]*dateGroup)
+func groupByRecord(data []repo.RecordByDate) []dateGroup {
+	group := make([]dateGroup, 0)
+
+	currentDate := ""
+	currentEquipId := 0
+	currentRecordKey := ""
 	for _, v := range data {
-		if _, ok := group[v.Date]; !ok {
-			equipGroupMap := make(map[int]equipGroup)
-			group[v.Date] = &dateGroup{
-				Date:   v.Date,
-				Start:  v.CreatedAt,
-				End:    v.CreatedAt,
-				Equips: equipGroupMap,
-			}
+		if currentDate == "" || currentDate != v.Date {
+			currentDate = v.Date
+			currentEquipId = 0
+			currentRecordKey = ""
+			group = append(group, dateGroup{
+				Date:  currentDate,
+				Start: v.CreatedAt,
+				End:   v.CreatedAt,
+			})
 		}
 
-		recordGroupMap := make(map[string]recordDetail)
-
-		if _, ok := (*group[v.Date]).Equips[int(v.EquipId)]; !ok {
-			(*group[v.Date]).Equips[int(v.EquipId)] = equipGroup{
+		if currentEquipId == 0 || currentEquipId != int(v.EquipId) {
+			currentEquipId = int(v.EquipId)
+			group[len(group)-1].Equips = append(group[len(group)-1].Equips, equipGroup{
 				ID:      v.EquipId,
 				Name:    v.Name,
 				Note:    v.Note,
-				Records: recordGroupMap,
-			}
+				Records: make([]recordDetail, 0),
+			})
 		}
 
-		setsKey := strconv.FormatFloat(float64(v.Weight), 'E', -1, 64) + "-" + strconv.Itoa(int(v.Reps))
-
-		(*group[v.Date]).Start = v.CreatedAt
-
-		if _, ok := (*group[v.Date]).Equips[int(v.EquipId)].Records[setsKey]; !ok {
-			(*group[v.Date]).Equips[int(v.EquipId)].Records[setsKey] = recordDetail{
-				ID:     v.ID,
+		key := strconv.FormatFloat(float64(v.Weight), 'E', -1, 64) + "-" + strconv.Itoa(int(v.Reps))
+		if currentRecordKey == "" || currentRecordKey != key {
+			currentRecordKey = key
+			recordList := group[len(group)-1].Equips[len(group[len(group)-1].Equips)-1].Records
+			record := recordDetail{
+				IDS:    make([]uint, 0),
 				Weight: v.Weight,
 				Reps:   int(v.Reps),
 				Sets:   0,
 				Note:   make([]string, 0),
 			}
+			recordList = append(recordList, record)
+			group[len(group)-1].Equips[len(group[len(group)-1].Equips)-1].Records = recordList
 		}
 
-		record := (*group[v.Date]).Equips[int(v.EquipId)].Records[setsKey]
-		record.Sets+=1
+		record := &group[len(group)-1].
+			Equips[len(group[len(group)-1].Equips)-1].
+			Records[len(group[len(group)-1].Equips[len(group[len(group)-1].Equips)-1].Records)-1]
+
+		record.IDS = append(record.IDS, v.ID)
+		record.Sets += int(1)
 		record.Note = append(record.Note, v.Note)
-		(*group[v.Date]).Equips[int(v.EquipId)].Records[setsKey] = record
 	}
 
 	return group
