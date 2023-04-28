@@ -79,7 +79,7 @@ func List(c *gin.Context) {
 
 	ids := []uint{}
 	for _, v := range *data {
-		ids = append(ids, v.Equip.ID)
+		ids = append(ids, v.ID)
 	}
 
 	maxWeight := recordRepo.GetMaxRecord(ids, time.Now().Format("2006-01-02") + " 23:59:59")
@@ -98,18 +98,18 @@ func List(c *gin.Context) {
 	for _, v := range *data {
 	
 		equipData = append(equipData, equipExpand{
-			Equip: v.Equip,
+			Equip: v,
 			MaxWeightRecord: maxWeightRecord{
-				ID: v.Equip.ID,
-				Weight: hash[v.Equip.ID].Weight,
-				Reps: hash[v.Equip.ID].Reps,
-				DayVolumn: float32(hash[v.Equip.ID].Volumn),
+				ID: v.ID,
+				Weight: hash[v.ID].Weight,
+				Reps: hash[v.ID].Reps,
+				DayVolumn: float32(hash[v.ID].Volumn),
 			},
 			MaxVolumeRecord: lastMaxWeightRecord{
-				ID: v.Equip.ID,
-				MaxWeight: lastHash[v.Equip.ID].Weight,
-				MaxWeightReps: lastHash[v.Equip.ID].Reps,
-				DayVolumn: float32(lastHash[v.Equip.ID].Volumn),
+				ID: v.ID,
+				MaxWeight: lastHash[v.ID].Weight,
+				MaxWeightReps: lastHash[v.ID].Reps,
+				DayVolumn: float32(lastHash[v.ID].Volumn),
 			},
 			// lastRecords: v.Record,
 		})
