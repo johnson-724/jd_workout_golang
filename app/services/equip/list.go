@@ -1,10 +1,13 @@
 package equip
 
 import (
-	"github.com/gin-gonic/gin"
 	"jd_workout_golang/app/middleware"
 	"jd_workout_golang/app/models"
 	repo "jd_workout_golang/app/repositories/equip"
+	recordRepo "jd_workout_golang/app/repositories/record"
+	"time"
+
+	"github.com/gin-gonic/gin"
 )
 
 type equipListRequest struct {
@@ -15,8 +18,29 @@ type equipListRequest struct {
 type equipListResponse struct {
 	Page    int            `json:"currentPage" form:"currentPage"`
 	PerPage int            `json:"perPage" form:"perPage"`
-	Data    []models.Equip `json:"data"`
+	Data    []equipExpand `json:"data"`
 	Total   int64          `json:"total"`
+}
+
+type equipExpand struct {
+	models.Equip `json:"equip"`
+	MaxWeightRecord maxWeightRecord `json:"maxWeightRecord"`
+	MaxVolumeRecord lastMaxWeightRecord `json:"maxVolumeRecord"`
+	// lastRecords []models.Record
+}
+
+type maxWeightRecord struct {
+	ID uint `json:"id"`
+	Weight float32 `json:"weight"`
+	Reps uint `json:"reps"`
+	DayVolumn float32 `json:"dayVolumn"`
+}
+
+type lastMaxWeightRecord struct {
+	ID uint `json:"id"`
+	MaxWeight float32 `json:"maxWeight"`
+	MaxWeightReps uint `json:"maxWeightReps"`
+	DayVolumn float32 `json:"dayVolumn"`
 }
 
 // get personal equip list
@@ -53,6 +77,45 @@ func List(c *gin.Context) {
 
 	data, count, err := repo.GetEqupis(paginateCondition, middleware.Uid)
 
+	ids := []uint{}
+	for _, v := range *data {
+		ids = append(ids, v.Equip.ID)
+	}
+
+	maxWeight := recordRepo.GetMaxRecord(ids, time.Now().Format("2006-01-02") + " 23:59:59")
+	hash := map[uint]recordRepo.RecordWithVolumn{}
+	for _, v := range *maxWeight {
+		hash[v.EquipId] = v
+	}
+
+	lastMaxWeight := recordRepo.GetMaxRecord(ids, time.Now().Format("2006-01-02") + " 00:00:00")
+	lastHash := map[uint]recordRepo.RecordWithVolumn{}
+	for _, v := range *lastMaxWeight {
+		lastHash[v.EquipId] = v
+	}
+
+	equipData := []equipExpand{}
+	for _, v := range *data {
+	
+		equipData = append(equipData, equipExpand{
+			Equip: v.Equip,
+			MaxWeightRecord: maxWeightRecord{
+				ID: v.Equip.ID,
+				Weight: hash[v.Equip.ID].Weight,
+				Reps: hash[v.Equip.ID].Reps,
+				DayVolumn: float32(hash[v.Equip.ID].Volumn),
+			},
+			MaxVolumeRecord: lastMaxWeightRecord{
+				ID: v.Equip.ID,
+				MaxWeight: lastHash[v.Equip.ID].Weight,
+				MaxWeightReps: lastHash[v.Equip.ID].Reps,
+				DayVolumn: float32(lastHash[v.Equip.ID].Volumn),
+			},
+			// lastRecords: v.Record,
+		})
+	}
+	
+
 	if err != nil {
 		c.JSON(422, gin.H{
 			"message": "get equip list error",
@@ -67,7 +130,7 @@ func List(c *gin.Context) {
 	c.JSON(200, equipListResponse{
 		Page:    paginate.Page,
 		PerPage: paginate.PerPage,
-		Data:    *data,
+		Data:    equipData,
 		Total:   *count,
 	})
 }

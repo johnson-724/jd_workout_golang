@@ -82,3 +82,28 @@ func GetRecords(page pageinate.PaginateCondition, uid uint) (*[]RecordByDate, *i
 
 	return &data, &count, nil
 }
+
+type RecordWithVolumn struct {
+	models.Record
+	Volumn float64 `json:"volumn"`
+}
+
+func GetMaxRecord(equips []uint, before string) *[]RecordWithVolumn {
+	records := []RecordWithVolumn{}
+	maxWeight := db.Connection.Model(models.Record{}).
+		Select( "equip_id, max(weight) as weight, max(reps) as reps, " +
+				"count(1) as count, date_format(created_at, '%Y-%m-%d') as date, " +
+				"row_number() over (partition by equip_id order by weight desc, reps desc, count(1)) as row_num").
+		Where("equip_id", equips).
+		Where("created_at < ?", before).
+		Group("equip_id, weight, reps, date_format(created_at, '%Y-%m-%d')").
+		Order("weight desc, reps desc")
+
+	db.Connection.Model(models.Record{}).
+		Select("records.id, records.equip_id, records.weight, records.reps, tmp.count, (records.weight * records.reps * tmp.count) as volumn").
+		Joins("join (?) as tmp on records.equip_id = tmp.equip_id and records.weight = tmp.weight and records.reps = tmp.reps and row_num = 1 ", maxWeight).
+		// Where("records.equip_id = tmp.equip_id and records.weight = tmp.weight and records.reps = tmp.reps and row_num = 1").
+		Find(&records)
+
+	return &records
+}
