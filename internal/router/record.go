@@ -9,5 +9,8 @@ import (
 func RegisterRecord(r *gin.RouterGroup) {
 	equipGroup := r.Group("/record").Use(auth.ValidateToken)
 
+	equipGroup.GET("/", recordAction.List)
 	equipGroup.POST("/", recordAction.CreateRecord)
+	equipGroup.PUT("/:id", recordAction.UpdateRecord)
+	equipGroup.DELETE("/:id", recordAction.DeleteRecord)
 }
