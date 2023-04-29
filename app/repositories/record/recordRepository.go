@@ -2,10 +2,12 @@ package record
 
 import (
 	"fmt"
-	"gorm.io/gorm"
 	"jd_workout_golang/app/models"
 	pageinate "jd_workout_golang/app/repositories/pageinate"
 	db "jd_workout_golang/lib/database"
+	"time"
+
+	"gorm.io/gorm"
 )
 
 type RecordByDate struct {
@@ -85,15 +87,19 @@ func GetRecords(page pageinate.PaginateCondition, uid uint) (*[]RecordByDate, *i
 
 type RecordWithVolumn struct {
 	models.Record
-	Volumn float64 `json:"volumn"`
+	IDS  string    `json:"ids"`
+	Volumn float32 `json:"volumn"`
+	Date  string  `json:"date"`
+	Count int     `json:"sets"`
+	Notes string  `json:"notes"`
 }
 
 func GetMaxRecord(equips []uint, before string) *[]RecordWithVolumn {
 	records := []RecordWithVolumn{}
 	maxWeight := db.Connection.Model(models.Record{}).
-		Select( "equip_id, max(weight) as weight, max(reps) as reps, " +
-				"count(1) as count, date_format(created_at, '%Y-%m-%d') as date, " +
-				"row_number() over (partition by equip_id order by weight desc, reps desc, count(1)) as row_num").
+		Select("equip_id, max(weight) as weight, max(reps) as reps, "+
+			"count(1) as count, date_format(created_at, '%Y-%m-%d') as date, "+
+			"row_number() over (partition by equip_id order by weight desc, reps desc, count(1)) as row_num").
 		Where("equip_id", equips).
 		Where("created_at < ?", before).
 		Group("equip_id, weight, reps, date_format(created_at, '%Y-%m-%d')").
@@ -103,6 +109,22 @@ func GetMaxRecord(equips []uint, before string) *[]RecordWithVolumn {
 		Select("records.id, records.equip_id, records.weight, records.reps, tmp.count, (records.weight * records.reps * tmp.count) as volumn").
 		Joins("join (?) as tmp on records.equip_id = tmp.equip_id and records.weight = tmp.weight and records.reps = tmp.reps and row_num = 1 ", maxWeight).
 		// Where("records.equip_id = tmp.equip_id and records.weight = tmp.weight and records.reps = tmp.reps and row_num = 1").
+		Find(&records)
+
+	return &records
+}
+
+func GetRecentRecord(equips []uint) *[]RecordWithVolumn {
+	records := []RecordWithVolumn{}
+
+	db.Connection.Model(models.Record{}).
+		Select("group_concat(records.id) as ids, records.weight, records.reps, records.equip_id, group_concat(records.note) as notes, "+
+			// "row_number() over (partition by equip_id order by date_format(created_at, '%Y-%m-%d')) as row_num,"+
+			"date_format(created_at, '%Y-%m-%d') as date, count(1) as count",
+		).
+		Where("records.created_at >= ?", time.Now().AddDate(0, 0, -7).Format("2006-01-02")).
+		Group("equip_id, weight, reps, date_format(created_at, '%Y-%m-%d')").
+		Order("equip_id asc, date_format(created_at, '%Y-%m-%d') asc").
 		Find(&records)
 
 	return &records
