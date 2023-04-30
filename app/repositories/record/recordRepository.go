@@ -87,7 +87,7 @@ func GetRecords(page pageinate.PaginateCondition, uid uint) (*[]RecordByDate, *i
 
 type RecordWithVolumn struct {
 	models.Record
-	IDS  string    `json:"ids"`
+	Ids  string    `json:"ids"`
 	Volumn float32 `json:"volumn"`
 	Date  string  `json:"date"`
 	Count int     `json:"sets"`

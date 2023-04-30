@@ -108,8 +108,9 @@ func List(c *gin.Context) {
 	recent := recordRepo.GetRecentRecord(ids)
 	recentHash := map[uint][]recentRecord{}
 	for _, v := range *recent {
-		idStrings := strings.Split(v.IDS, ",")
-		recordIds := make([]uint, len(idStrings))
+		idStrings := strings.Split(v.Ids, ",")
+		recordIds := make([]uint, 0)
+
 		for _, id := range idStrings {
 			value ,_ := strconv.ParseUint(id, 10, 0)
 			recordIds = append(recordIds, uint(value))
