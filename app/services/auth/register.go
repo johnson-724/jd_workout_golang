@@ -2,14 +2,14 @@ package auth
 
 import (
 	"fmt"
+	"github.com/gin-gonic/gin"
+	"golang.org/x/crypto/bcrypt"
+	"gorm.io/gorm"
 	"jd_workout_golang/app/models"
 	"jd_workout_golang/app/services/jwtHelper"
 	email "jd_workout_golang/lib/Email"
 	db "jd_workout_golang/lib/database"
-	"os"	
-	"github.com/gin-gonic/gin"
-	"golang.org/x/crypto/bcrypt"
-	"gorm.io/gorm"
+	"os"
 )
 
 type registerForm struct {
@@ -102,7 +102,7 @@ func storeUser(u *models.User, db *gorm.DB) *models.User {
 
 func generateVerifyEmail(user *models.User) *error {
 	token, _ := jwtHelper.GenerateToken(user)
-	baseUrl := os.Getenv("APP_URL") + "/verifyEmail?token=%s"
+	baseUrl := os.Getenv("APP_URL") + "/verify-email?email=%s&token=%s"
 
 	mail := email.Email{
 		FromName:  os.Getenv("EMAIL_FROM_NAME"),
@@ -110,7 +110,7 @@ func generateVerifyEmail(user *models.User) *error {
 		ToEmail:   user.Email,
 		ToName:    user.Username,
 		Subject:   "JD Workout 驗證信",
-		Content:   fmt.Sprintf("請點擊以下連結驗證信箱: %s", fmt.Sprintf(baseUrl, token)),
+		Content:   fmt.Sprintf("請點擊以下連結驗證信箱: %s", fmt.Sprintf(baseUrl, user.Email, token)),
 	}
 
 	err := email.Send(mail)
