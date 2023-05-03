@@ -1,11 +1,15 @@
 package auth
 
 import (
+	"fmt"
+	"jd_workout_golang/app/models"
+	"jd_workout_golang/app/services/jwtHelper"
+	email "jd_workout_golang/lib/Email"
+	db "jd_workout_golang/lib/database"
+	"os"	
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
-	"jd_workout_golang/app/models"
-	db "jd_workout_golang/lib/database"
 )
 
 type registerForm struct {
@@ -35,6 +39,8 @@ func RegisterAction(c *gin.Context) {
 			"error":   err.Error(),
 		})
 
+		c.Abort()
+
 		return
 	}
 
@@ -52,10 +58,25 @@ func RegisterAction(c *gin.Context) {
 			"error":   "duplicate email",
 		})
 
+		c.Abort()
+
 		return
 	}
 
 	storeUser(user, db.Connection)
+
+	err := generateVerifyEmail(user)
+
+	if err != nil {
+		c.JSON(500, gin.H{
+			"message": "register failed",
+			"error":   "server error",
+		})
+
+		c.Abort()
+
+		return
+	}
 
 	c.JSON(200, gin.H{
 		"message": "register success",
@@ -77,4 +98,26 @@ func storeUser(u *models.User, db *gorm.DB) *models.User {
 	db.Create(u)
 
 	return u
+}
+
+func generateVerifyEmail(user *models.User) *error {
+	token, _ := jwtHelper.GenerateToken(user)
+	baseUrl := os.Getenv("APP_URL") + "/verifyEmail?token=%s"
+
+	mail := email.Email{
+		FromName:  os.Getenv("EMAIL_FROM_NAME"),
+		FromEmail: os.Getenv("EMAIL_FROM_ADDRESS"),
+		ToEmail:   user.Email,
+		ToName:    user.Username,
+		Subject:   "JD Workout 驗證信",
+		Content:   fmt.Sprintf("請點擊以下連結驗證信箱: %s", fmt.Sprintf(baseUrl, token)),
+	}
+
+	err := email.Send(mail)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
