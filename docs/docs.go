@@ -565,7 +565,7 @@ const docTemplate = `{
                         }
                     },
                     "422": {
-                        "description": "{\"message\": \"Email 重複\", \"error\": \"duplicate email\"}",
+                        "description": "{\"message\": \"信箱尚未驗證\"}",
                         "schema": {
                             "type": "string"
                         }
@@ -600,6 +600,26 @@ const docTemplate = `{
                 }
             }
         },
+        "equip.equipExpand": {
+            "type": "object",
+            "properties": {
+                "equip": {
+                    "$ref": "#/definitions/models.Equip"
+                },
+                "lastRecords": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/equip.recentRecord"
+                    }
+                },
+                "maxVolumeRecord": {
+                    "$ref": "#/definitions/equip.lastMaxWeightRecord"
+                },
+                "maxWeightRecord": {
+                    "$ref": "#/definitions/equip.maxWeightRecord"
+                }
+            }
+        },
         "equip.equipListResponse": {
             "type": "object",
             "properties": {
@@ -609,7 +629,7 @@ const docTemplate = `{
                 "data": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.Equip"
+                        "$ref": "#/definitions/equip.equipExpand"
                     }
                 },
                 "perPage": {
@@ -617,6 +637,69 @@ const docTemplate = `{
                 },
                 "total": {
                     "type": "integer"
+                }
+            }
+        },
+        "equip.lastMaxWeightRecord": {
+            "type": "object",
+            "properties": {
+                "dayVolumn": {
+                    "type": "number"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "maxWeight": {
+                    "type": "number"
+                },
+                "maxWeightReps": {
+                    "type": "integer"
+                }
+            }
+        },
+        "equip.maxWeightRecord": {
+            "type": "object",
+            "properties": {
+                "dayVolumn": {
+                    "type": "number"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "reps": {
+                    "type": "integer"
+                },
+                "weight": {
+                    "type": "number"
+                }
+            }
+        },
+        "equip.recentRecord": {
+            "type": "object",
+            "properties": {
+                "ids": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "note": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "reps": {
+                    "type": "integer"
+                },
+                "sets": {
+                    "type": "integer"
+                },
+                "volume": {
+                    "type": "number"
+                },
+                "weight": {
+                    "type": "number"
                 }
             }
         },
@@ -674,41 +757,6 @@ const docTemplate = `{
                 }
             }
         },
-        "models.Record": {
-            "type": "object",
-            "properties": {
-                "createdAt": {
-                    "type": "string"
-                },
-                "equip": {
-                    "$ref": "#/definitions/models.Equip"
-                },
-                "equip_id": {
-                    "type": "integer"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "note": {
-                    "type": "string"
-                },
-                "reps": {
-                    "type": "integer"
-                },
-                "updatedAt": {
-                    "type": "string"
-                },
-                "userId": {
-                    "type": "integer"
-                },
-                "weight": {
-                    "type": "number"
-                }
-            }
-        },
         "record.createBody": {
             "type": "object",
             "required": [
@@ -731,6 +779,72 @@ const docTemplate = `{
                 }
             }
         },
+        "record.dateGroup": {
+            "type": "object",
+            "properties": {
+                "date": {
+                    "type": "string"
+                },
+                "end": {
+                    "type": "string"
+                },
+                "equips": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/record.equipGroup"
+                    }
+                },
+                "start": {
+                    "type": "string"
+                }
+            }
+        },
+        "record.equipGroup": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "note": {
+                    "type": "string"
+                },
+                "records": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/record.recordDetail"
+                    }
+                }
+            }
+        },
+        "record.recordDetail": {
+            "type": "object",
+            "properties": {
+                "ids": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "note": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "reps": {
+                    "type": "integer"
+                },
+                "sets": {
+                    "type": "integer"
+                },
+                "weight": {
+                    "type": "number"
+                }
+            }
+        },
         "record.recordListResponse": {
             "type": "object",
             "properties": {
@@ -740,7 +854,7 @@ const docTemplate = `{
                 "data": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.Record"
+                        "$ref": "#/definitions/record.dateGroup"
                     }
                 },
                 "perPage": {

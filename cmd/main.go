@@ -2,6 +2,7 @@ package main
 
 import (
 	"jd_workout_golang/app/middleware"
+	authAction "jd_workout_golang/app/services/auth"
 	docs "jd_workout_golang/docs"
 	"jd_workout_golang/internal/router"
 	"jd_workout_golang/lib/database"
@@ -51,6 +52,8 @@ func init() {
 func SetupRouter() *gin.Engine {
 	r := gin.Default()
 	r.Use(middleware.Cors())
+
+	r.GET("/verify-email", authAction.VerifyEmail)
 
 	// 註冊 router group
 	apiGroup := r.Group("/api/v1")
