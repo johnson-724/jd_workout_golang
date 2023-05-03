@@ -12,18 +12,72 @@ definitions:
     - password
     - username
     type: object
+  equip.equipExpand:
+    properties:
+      equip:
+        $ref: '#/definitions/models.Equip'
+      lastRecords:
+        items:
+          $ref: '#/definitions/equip.recentRecord'
+        type: array
+      maxVolumeRecord:
+        $ref: '#/definitions/equip.lastMaxWeightRecord'
+      maxWeightRecord:
+        $ref: '#/definitions/equip.maxWeightRecord'
+    type: object
   equip.equipListResponse:
     properties:
       currentPage:
         type: integer
       data:
         items:
-          $ref: '#/definitions/models.Equip'
+          $ref: '#/definitions/equip.equipExpand'
         type: array
       perPage:
         type: integer
       total:
         type: integer
+    type: object
+  equip.lastMaxWeightRecord:
+    properties:
+      dayVolumn:
+        type: number
+      id:
+        type: integer
+      maxWeight:
+        type: number
+      maxWeightReps:
+        type: integer
+    type: object
+  equip.maxWeightRecord:
+    properties:
+      dayVolumn:
+        type: number
+      id:
+        type: integer
+      reps:
+        type: integer
+      weight:
+        type: number
+    type: object
+  equip.recentRecord:
+    properties:
+      ids:
+        items:
+          type: integer
+        type: array
+      note:
+        items:
+          type: string
+        type: array
+      reps:
+        type: integer
+      sets:
+        type: integer
+      volume:
+        type: number
+      weight:
+        type: number
     type: object
   equip.updateFrom:
     properties:
@@ -60,29 +114,6 @@ definitions:
       weights:
         type: string
     type: object
-  models.Record:
-    properties:
-      createdAt:
-        type: string
-      equip:
-        $ref: '#/definitions/models.Equip'
-      equip_id:
-        type: integer
-      id:
-        type: integer
-      name:
-        type: string
-      note:
-        type: string
-      reps:
-        type: integer
-      updatedAt:
-        type: string
-      userId:
-        type: integer
-      weight:
-        type: number
-    type: object
   record.createBody:
     properties:
       equip_id:
@@ -98,13 +129,56 @@ definitions:
     - reps
     - weight
     type: object
+  record.dateGroup:
+    properties:
+      date:
+        type: string
+      end:
+        type: string
+      equips:
+        items:
+          $ref: '#/definitions/record.equipGroup'
+        type: array
+      start:
+        type: string
+    type: object
+  record.equipGroup:
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+      note:
+        type: string
+      records:
+        items:
+          $ref: '#/definitions/record.recordDetail'
+        type: array
+    type: object
+  record.recordDetail:
+    properties:
+      ids:
+        items:
+          type: integer
+        type: array
+      note:
+        items:
+          type: string
+        type: array
+      reps:
+        type: integer
+      sets:
+        type: integer
+      weight:
+        type: number
+    type: object
   record.recordListResponse:
     properties:
       currentPage:
         type: integer
       data:
         items:
-          $ref: '#/definitions/models.Record'
+          $ref: '#/definitions/record.dateGroup'
         type: array
       perPage:
         type: integer
@@ -478,7 +552,7 @@ paths:
           schema:
             type: string
         "422":
-          description: '{"message": "Email 重複", "error": "duplicate email"}'
+          description: '{"message": "信箱尚未驗證"}'
           schema:
             type: string
         "500":

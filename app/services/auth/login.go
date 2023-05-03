@@ -52,6 +52,14 @@ func LoginAction(c *gin.Context) {
 		return
 	}
 
+	if user.EmailVerified == 0 {
+		c.JSON(422, gin.H{
+			"message": "信箱尚未驗證",
+		})
+
+		return
+	}
+
 	token, _ := jwtHelper.GenerateToken(&user)
 
 	c.JSON(200, gin.H{

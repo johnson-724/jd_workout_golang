@@ -24,6 +24,7 @@ type registerForm struct {
 // @Success 200 {string} json "{"message": "register success"}"
 // @Failure 422 {string} json "{"message": "register failed", "error": "register form validation failed"}"
 // @Failure 422 {string} json "{"message": "Email 重複", "error": "duplicate email"}"
+// @Failure 422 {string} json "{"message": "信箱尚未驗證"}"
 // @Failure 500 {string} json "{"message": "register failed", "error": "server error"}"
 // @Router /register [post]
 func RegisterAction(c *gin.Context) {
