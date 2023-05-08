@@ -35,7 +35,7 @@ func main() {
 
 		defer sentry.Flush(2 * time.Second)
 
-		sentry.CaptureMessage("手動發送 Test sentry error - type 3")
+		defer sentry.Recover()
 	}
 
 	r := SetupRouter()
