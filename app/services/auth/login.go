@@ -1,12 +1,15 @@
 package auth
 
 import (
-	"jd_workout_golang/app/models"
-	"jd_workout_golang/app/services/jwtHelper"
-	db "jd_workout_golang/lib/database"
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
+	"jd_workout_golang/app/models"
+	repo "jd_workout_golang/app/repositories/user"
+	"jd_workout_golang/app/services/jwtHelper"
+	db "jd_workout_golang/lib/database"
+	google "jd_workout_golang/lib/google"
+	"net/http"
 )
 
 // LoginAction logs in a user with the provided email and password,
@@ -15,7 +18,7 @@ import (
 // @Summary Login user
 // @Description Logs in a user with the provided email and password, and generates a JWT token for the user
 // @Tags Auth
-// @Accept x-www-form-urlencoded	
+// @Accept x-www-form-urlencoded
 // @Produce json
 // @Param email formData string true "User email"
 // @Param password formData string true "User password"
@@ -86,4 +89,76 @@ func validateLogin(user *models.User, db *gorm.DB) (bool, error) {
 	*user = record
 
 	return true, nil
+}
+
+// LoginWithGoogleAction logs in a user with the provided google token,
+// and generates a JWT token for the user.
+func LoginWithGoogleAction(c *gin.Context) {
+	redirectURL := google.CreateGoogleOAuthURL()
+	c.Redirect(http.StatusSeeOther, redirectURL) // http.StatusSeeOther 為 303
+}
+
+// LoginWithAuthkAction logs in a user with the provided google token,
+func LoginWithGoogleAuthkAction(c *gin.Context) {
+	token, err := google.GetAccessToken(c.Query("code"))
+
+	if err != nil {
+		c.JSON(422, gin.H{
+			"message": "登入失敗",
+			"error":   err.Error(),
+		})
+
+		return
+	}
+
+	userInfo, err := google.GetUserInfo(token)
+
+	if err != nil {
+		c.JSON(422, gin.H{
+			"message": "登入失敗, 無法取得使用者授權資訊",
+			"error":   err.Error(),
+		})
+
+		return
+	}
+
+	user, err := repo.GetUserByEmail(userInfo.Email)
+
+	if err != nil {
+		c.JSON(422, gin.H{
+			"message": "登入失敗, 無法取得使用者資訊",
+			"error":   err.Error(),
+		})
+
+		return
+	}
+
+	bindUserWithThridPartyAccount(userInfo, user)
+
+	jwtToken, _ := jwtHelper.GenerateToken(user)
+
+	c.JSON(200, gin.H{
+		"message": "login success",
+		"token":   jwtToken,
+	})
+}
+
+func bindUserWithThridPartyAccount(thirdPartyInfo *google.UserInfo, user *models.User) {
+	// user exist and email not verified
+	if user.ID != 0 && user.EmailVerified != 1{
+		user.EmailVerified = 1
+
+		repo.Update(user)
+
+		return
+	}
+
+	// create user with third party account
+	if user.ID == 0 {
+		user.Username = thirdPartyInfo.Name
+		user.Email = thirdPartyInfo.Email
+		user.EmailVerified = 1
+
+		repo.Create(user)
+	}
 }
