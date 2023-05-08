@@ -4,6 +4,9 @@ import (
 	"jd_workout_golang/app/models"
 	"jd_workout_golang/app/services/jwtHelper"
 	db "jd_workout_golang/lib/database"
+	google "jd_workout_golang/lib/google"
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
@@ -15,7 +18,7 @@ import (
 // @Summary Login user
 // @Description Logs in a user with the provided email and password, and generates a JWT token for the user
 // @Tags Auth
-// @Accept x-www-form-urlencoded	
+// @Accept x-www-form-urlencoded
 // @Produce json
 // @Param email formData string true "User email"
 // @Param password formData string true "User password"
@@ -86,4 +89,11 @@ func validateLogin(user *models.User, db *gorm.DB) (bool, error) {
 	*user = record
 
 	return true, nil
+}
+
+// LoginWithGoogleAction logs in a user with the provided google token,
+// and generates a JWT token for the user.
+func LoginWithGoogleAction(c *gin.Context) {
+	redirectURL := google.CreateGoogleOAuthURL()
+	c.Redirect(http.StatusSeeOther, redirectURL) // http.StatusSeeOther 為 303
 }

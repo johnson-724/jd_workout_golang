@@ -9,6 +9,7 @@ import (
 func RegisterUser(r *gin.RouterGroup) {
 	r.POST("/register", authAction.RegisterAction)
 	r.POST("/login", authAction.LoginAction)
+	r.GET("/login/google", authAction.LoginWithGoogleAction)
 
 	userGroup := r.Group("/user").Use(auth.ValidateToken)
 
