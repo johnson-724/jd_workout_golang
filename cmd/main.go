@@ -39,7 +39,8 @@ func main() {
 		defer func() {
 			if r := recover(); r != nil {
 				log.Printf("Recovered from panic: %v\n", r)
-				sentry.Recover()
+				sentry.CurrentHub().Recover(r)
+				sentry.Flush(time.Second * 5)
 			}
 		}()
 	}
