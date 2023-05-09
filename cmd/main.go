@@ -22,6 +22,7 @@ import (
 // @description Type Bearer followed by a space and JWT token.
 // @scope.write Grants write access
 func main() {
+	setFileLog()
 	sentryDsn := os.Getenv("SENTRY_DSN")
 	if sentryDsn != "" {
 		err := sentry.Init(sentry.ClientOptions{
@@ -65,4 +66,14 @@ func SetupRouter() *gin.Engine {
 	router.RegisterRecord(apiGroup)
 
 	return r
+}
+
+func setFileLog() {
+	logFile, err := os.OpenFile("logfile.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	if err != nil {
+		log.Fatalf("Failed to open log file: %v", err)
+	}
+	defer logFile.Close()
+
+	log.SetOutput(logFile)
 }
