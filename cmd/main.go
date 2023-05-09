@@ -73,7 +73,6 @@ func setFileLog() {
 	if err != nil {
 		log.Fatalf("Failed to open log file: %v", err)
 	}
-	defer logFile.Close()
 
 	log.SetOutput(logFile)
 }
