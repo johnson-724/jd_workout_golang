@@ -36,7 +36,12 @@ func main() {
 
 		defer sentry.Flush(2 * time.Second)
 
-		defer sentry.Recover()
+		defer func() {
+			if r := recover(); r != nil {
+				log.Printf("Recovered from panic: %v\n", r)
+				sentry.Recover()
+			}
+		}()
 	}
 
 	r := SetupRouter()
