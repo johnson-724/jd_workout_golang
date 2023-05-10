@@ -39,4 +39,5 @@ jobs:
             cd /app/jd_workout_golang && 
             docker-compose pull && 
             docker-compose up -d && 
+            docker image prune -f &&
             docker-compose exec -T app /app/migrate migrate
