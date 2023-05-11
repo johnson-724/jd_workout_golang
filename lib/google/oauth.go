@@ -5,10 +5,10 @@ import (
 	"encoding/json"
 	"io"
 	"os"
-
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
 	oauthApi "google.golang.org/api/oauth2/v2"
+	"google.golang.org/api/option"
 )
 
 type UserInfo struct {
@@ -51,6 +51,32 @@ func GetAccessToken(code string) (*oauth2.Token, error) {
 	}
 
 	return token, nil
+}
+
+func GetUserInfoWithAccessToken(token string) (*UserInfo, error) {
+	ts := oauth2.StaticTokenSource(&oauth2.Token{
+		AccessToken: token,
+	})
+
+	tokFile := "credential/google/credentials.json"
+	path := getAbsPath(tokFile)
+
+	bs,_ := oauthApi.NewService(context.Background(),option.WithTokenSource(ts), option.WithCredentialsFile(path))
+	
+	userInfoService := oauthApi.NewUserinfoService(bs)
+
+	userInfo, err := userInfoService.Get().Do()
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &UserInfo{
+		Email:    userInfo.Email,
+		Name:     userInfo.Name,
+		Pricture: userInfo.Picture,
+
+	}, nil
 }
 
 func GetUserInfo(token *oauth2.Token) (*UserInfo, error) {
