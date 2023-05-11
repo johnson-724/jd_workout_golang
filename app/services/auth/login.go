@@ -119,33 +119,36 @@ func LoginWithGoogleAuthkAction(c *gin.Context) {
 			"error":   err.Error(),
 		})
 
+		c.Abort()
+
 		return
 	}
 
-	user, err := repo.GetUserByEmail(userInfo.Email)
+	validateOnGoogle(userInfo, c)
+}
+
+func LoginWithGoogleAccessTokenAction(c *gin.Context) {
+	token := c.Query("token")
+
+	userInfo, err := google.GetUserInfoWithAccessToken(token)
 
 	if err != nil {
 		c.JSON(422, gin.H{
-			"message": "登入失敗, 無法取得使用者資訊",
+			"message": "登入失敗, 無法取得使用者授權資訊",
 			"error":   err.Error(),
 		})
+
+		c.Abort()
 
 		return
 	}
 
-	bindUserWithThridPartyAccount(userInfo, user)
-
-	jwtToken, _ := jwtHelper.GenerateToken(user)
-
-	c.JSON(200, gin.H{
-		"message": "login success",
-		"token":   jwtToken,
-	})
+	validateOnGoogle(userInfo, c)
 }
 
 func bindUserWithThridPartyAccount(thirdPartyInfo *google.UserInfo, user *models.User) {
 	// user exist and email not verified
-	if user.ID != 0 && user.EmailVerified != 1{
+	if user.ID != 0 && user.EmailVerified != 1 {
 		user.EmailVerified = 1
 
 		repo.Update(user)
@@ -161,4 +164,28 @@ func bindUserWithThridPartyAccount(thirdPartyInfo *google.UserInfo, user *models
 
 		repo.Create(user)
 	}
+}
+
+func validateOnGoogle(userInfo *google.UserInfo, c *gin.Context) {
+	user, err := repo.GetUserByEmail(userInfo.Email)
+
+	if err != nil {
+		c.JSON(422, gin.H{
+			"message": "登入失敗, 無法取得使用者資訊",
+			"error":   err.Error(),
+		})
+
+		c.Abort()
+
+		return
+	}
+
+	bindUserWithThridPartyAccount(userInfo, user)
+
+	jwtToken, _ := jwtHelper.GenerateToken(user)
+
+	c.JSON(200, gin.H{
+		"message": "login success",
+		"token":   jwtToken,
+	})
 }
