@@ -1,4 +1,11 @@
 definitions:
+  auth.LoginWithGoogleAccessTokenForm:
+    properties:
+      token:
+        type: string
+    required:
+    - token
+    type: object
   auth.registerForm:
     properties:
       email:
@@ -400,6 +407,33 @@ paths:
           schema:
             type: string
       summary: Login user
+      tags:
+      - Auth
+  /login/google/access-token:
+    post:
+      consumes:
+      - application/json
+      description: Logs in a user with the google oauth2 access token, and generates
+        a JWT token for the user
+      parameters:
+      - description: LoginWithGoogleAccessTokenForm
+        in: body
+        name: LoginWithGoogleAccessTokenForm
+        required: true
+        schema:
+          $ref: '#/definitions/auth.LoginWithGoogleAccessTokenForm'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{''message'': ''login success'', ''token'': ''JWT token''}'
+          schema:
+            type: string
+        "422":
+          description: '{''message'': ''缺少必要欄位'', ''error'': ''error message''}'
+          schema:
+            type: string
+      summary: Login user with google oauth2 access token
       tags:
       - Auth
   /record:

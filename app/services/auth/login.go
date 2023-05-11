@@ -127,10 +127,37 @@ func LoginWithGoogleAuthkAction(c *gin.Context) {
 	validateOnGoogle(userInfo, c)
 }
 
-func LoginWithGoogleAccessTokenAction(c *gin.Context) {
-	token := c.Query("token")
+type LoginWithGoogleAccessTokenForm struct {
+	Token string `json:"token" form:"token" binding:"required"`
+}
 
-	userInfo, err := google.GetUserInfoWithAccessToken(token)
+// Login with google oauth2 access token
+// and generates a JWT token for the user.
+//
+// @Summary Login user with google oauth2 access token
+// @Description Logs in a user with the google oauth2 access token, and generates a JWT token for the user
+// @Tags Auth
+// @Accept json
+// @Produce json
+// @Param LoginWithGoogleAccessTokenForm body LoginWithGoogleAccessTokenForm true "LoginWithGoogleAccessTokenForm"
+// @Success 200 {string} string "{'message': 'login success', 'token': 'JWT token'}"
+// @Failure 422 {string} string "{'message': '缺少必要欄位', 'error': 'error message'}"
+// @Router /login/google/access-token [post]
+func LoginWithGoogleAccessTokenAction(c *gin.Context) {
+	loginForm := LoginWithGoogleAccessTokenForm{}
+
+	if err := c.ShouldBind(&loginForm); err != nil {
+		c.JSON(422, gin.H{
+			"message": "缺少必要欄位",
+			"error":   err.Error(),
+		})
+
+		c.Abort()
+
+		return
+	}
+
+	userInfo, err := google.GetUserInfoWithAccessToken(loginForm.Token)
 
 	if err != nil {
 		c.JSON(422, gin.H{

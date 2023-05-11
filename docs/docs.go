@@ -327,6 +327,46 @@ const docTemplate = `{
                 }
             }
         },
+        "/login/google/access-token": {
+            "post": {
+                "description": "Logs in a user with the google oauth2 access token, and generates a JWT token for the user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Login user with google oauth2 access token",
+                "parameters": [
+                    {
+                        "description": "LoginWithGoogleAccessTokenForm",
+                        "name": "LoginWithGoogleAccessTokenForm",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/auth.LoginWithGoogleAccessTokenForm"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{'message': 'login success', 'token': 'JWT token'}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "422": {
+                        "description": "{'message': '缺少必要欄位', 'error': 'error message'}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/record": {
             "get": {
                 "security": [
@@ -581,6 +621,17 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "auth.LoginWithGoogleAccessTokenForm": {
+            "type": "object",
+            "required": [
+                "token"
+            ],
+            "properties": {
+                "token": {
+                    "type": "string"
+                }
+            }
+        },
         "auth.registerForm": {
             "type": "object",
             "required": [
