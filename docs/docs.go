@@ -16,6 +16,29 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/app/version": {
+            "get": {
+                "description": "Get app version",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "App"
+                ],
+                "summary": "Get app version",
+                "responses": {
+                    "200": {
+                        "description": "{'latestVersion: 1.0.0', 'requiredVersion': '1.0.0'}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/equip": {
             "get": {
                 "security": [
