@@ -1,6 +1,10 @@
 package main
 
 import (
+	"github.com/getsentry/sentry-go"
+	"github.com/gin-gonic/gin"
+	swaggerfiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 	"jd_workout_golang/app/middleware"
 	authAction "jd_workout_golang/app/services/auth"
 	docs "jd_workout_golang/docs"
@@ -10,10 +14,6 @@ import (
 	"log"
 	"os"
 	"time"
-	"github.com/getsentry/sentry-go"
-	"github.com/gin-gonic/gin"
-	swaggerfiles "github.com/swaggo/files"
-	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 // @securityDefinitions.apikey Bearer
@@ -64,6 +64,9 @@ func SetupRouter() *gin.Engine {
 
 	// 註冊 router group
 	apiGroup := r.Group("/api/v1")
+
+	apiGroup.GET("/app/version", getAppVersion)
+
 	// 註冊 user router
 	router.RegisterUser(apiGroup)
 
@@ -81,4 +84,19 @@ func setFileLog() {
 	}
 
 	log.SetOutput(logFile)
+}
+
+// @Summary Get app version
+// @Description Get app version
+// @Tags App
+// @Accept  json
+// @Produce  json
+// @Success 200 {object} string "{'latestVersion: 1.0.0', 'requiredVersion': '1.0.0'}"
+// @Router /app/version [get]
+func getAppVersion(c *gin.Context) {
+
+	c.JSON(200, gin.H{
+		"latestVersion":   os.Getenv("APP_VERSION"),
+		"requiredVersion": os.Getenv("APP_REQUIRED_VERSION"),
+	})
 }
