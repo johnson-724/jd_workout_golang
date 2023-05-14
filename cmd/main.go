@@ -59,6 +59,7 @@ func init() {
 func SetupRouter() *gin.Engine {
 	r := gin.Default()
 	r.Use(middleware.Cors())
+	r.Use(middleware.FailResponseAlert())
 
 	r.GET("/verify-email", authAction.VerifyEmail)
 
