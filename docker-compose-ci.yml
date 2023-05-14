@@ -23,5 +23,15 @@ services:
       MYSQL_DATABASE: jd_workout
       MYSQL_USER: test
       MYSQL_PASSWORD: test
+  redis:
+    build:
+      context: .
+      dockerfile: ./docker/redis/DockerfileCI
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-password}
 volumes:
   mysql_data:

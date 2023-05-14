@@ -30,6 +30,8 @@ services:
       dockerfile: ./docker/redis/DockerfileDev
     ports:
       - "6379:6379"
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-password}
     volumes:
       - redis_data:/data
   lint:
