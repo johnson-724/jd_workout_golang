@@ -10,6 +10,7 @@ import (
 	docs "jd_workout_golang/docs"
 	"jd_workout_golang/internal/router"
 	"jd_workout_golang/lib/database"
+	"jd_workout_golang/lib/redis"
 	"jd_workout_golang/lib/file"
 	"log"
 	"os"
@@ -54,10 +55,12 @@ func main() {
 func init() {
 	file.LoadConfigAndEnv()
 	database.InitDatabase()
+	redis.InitRedis()
 }
 
 func SetupRouter() *gin.Engine {
 	r := gin.Default()
+	r.Use(middleware.ApiRateLimit)
 	r.Use(middleware.Cors())
 	r.Use(middleware.FailResponseAlert())
 
