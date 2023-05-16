@@ -65,6 +65,7 @@ func SetupRouter() *gin.Engine {
 	r.Use(middleware.FailResponseAlert())
 
 	r.GET("/verify-email", authAction.VerifyEmail)
+	r.POST("/forget-password", authAction.ForgetPasswordAction)
 
 	// 註冊 router group
 	apiGroup := r.Group("/api/v1")
