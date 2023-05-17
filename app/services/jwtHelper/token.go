@@ -1,12 +1,13 @@
 package jwtHelper
 
 import (
-	jwt "github.com/golang-jwt/jwt/v5"
-	env "github.com/joho/godotenv"
+	"fmt"
 	"jd_workout_golang/app/models"
 	"os"
 	"strings"
 	"time"
+	jwt "github.com/golang-jwt/jwt/v5"
+	env "github.com/joho/godotenv"
 )
 
 func GenerateTokenWithPayload(u *models.User, payload map[string]interface{}) (string, error) {
@@ -28,8 +29,9 @@ func GenerateToken(u *models.User) (string, error) {
 	env.Load()
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"uid": u.ID,
-		"exp": time.Now().Add(time.Hour * 24).Unix(),
+		"uid":          u.ID,
+		"restPassword": u.ResetPassword,
+		"exp":          time.Now().Add(time.Hour * 24).Unix(),
 	})
 
 	return token.SignedString([]byte(os.Getenv("APP_KEY")))
@@ -60,6 +62,10 @@ func ValidateToken(tokenString string, uid *uint) (string, bool) {
 
 	if !ok || !jwtToken.Valid {
 		return err.Error(), false
+	}
+
+	if claims["restPassword"] == 1 {
+		return fmt.Errorf("請先重置密碼").Error(), false
 	}
 
 	println(uint(claims["uid"].(float64)))
