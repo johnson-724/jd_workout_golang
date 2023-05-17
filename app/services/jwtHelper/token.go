@@ -3,13 +3,28 @@ package jwtHelper
 import (
 	jwt "github.com/golang-jwt/jwt/v5"
 	env "github.com/joho/godotenv"
-	"os"
 	"jd_workout_golang/app/models"
-	"time"
+	"os"
 	"strings"
+	"time"
 )
 
-func GenerateToken (u *models.User) (string, error) {
+func GenerateTokenWithPayload(u *models.User, payload map[string]interface{}) (string, error) {
+	claims := jwt.MapClaims{
+		"uid": u.ID,
+		"exp": time.Now().Add(time.Hour * 24).Unix(),
+	}
+
+	for k, v := range payload {
+		claims[k] = v
+	}
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, &claims)
+
+	return token.SignedString([]byte(os.Getenv("APP_KEY")))
+}
+
+func GenerateToken(u *models.User) (string, error) {
 	env.Load()
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
@@ -20,7 +35,7 @@ func GenerateToken (u *models.User) (string, error) {
 	return token.SignedString([]byte(os.Getenv("APP_KEY")))
 }
 
-func ValidateToken (tokenString string, uid *uint) (string, bool) {
+func ValidateToken(tokenString string, uid *uint) (string, bool) {
 	token, ok := parseToken(tokenString)
 
 	if !ok {
@@ -36,7 +51,7 @@ func ValidateToken (tokenString string, uid *uint) (string, bool) {
 
 			return []byte(os.Getenv("APP_KEY")), nil
 		})
-	
+
 	if err != nil {
 		return err.Error(), false
 	}
@@ -46,21 +61,21 @@ func ValidateToken (tokenString string, uid *uint) (string, bool) {
 	if !ok || !jwtToken.Valid {
 		return err.Error(), false
 	}
-	
+
 	println(uint(claims["uid"].(float64)))
 
 	uidPayload, _ := claims["uid"].(float64)
 
 	*uid = uint(uidPayload)
-	
+
 	return "", true
 }
 
-func parseToken (tokenString string) (string, bool) {
+func parseToken(tokenString string) (string, bool) {
 
 	tokenMap := strings.Split(tokenString, "Bearer ")
 
-	if (len(tokenMap) != 2) {
+	if len(tokenMap) != 2 {
 		return "", false
 	}
 

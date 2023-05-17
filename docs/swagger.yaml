@@ -1,4 +1,11 @@
 definitions:
+  auth.ForgetPassword:
+    properties:
+      email:
+        type: string
+    required:
+    - email
+    type: object
   auth.LoginWithGoogleAccessTokenForm:
     properties:
       token:
@@ -393,6 +400,32 @@ paths:
       summary: update equip weight
       tags:
       - Equip
+  /forget-password:
+    post:
+      consumes:
+      - application/json
+      description: user forget password
+      parameters:
+      - description: forgetPassword
+        in: body
+        name: forgetPassword
+        required: true
+        schema:
+          $ref: '#/definitions/auth.ForgetPassword'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"message": "forget password success"}'
+          schema:
+            type: string
+        "422":
+          description: '{"message": "查無此 email"}'
+          schema:
+            type: string
+      summary: forget password
+      tags:
+      - Auth
   /login:
     post:
       consumes:

@@ -10,8 +10,8 @@ import (
 	docs "jd_workout_golang/docs"
 	"jd_workout_golang/internal/router"
 	"jd_workout_golang/lib/database"
-	"jd_workout_golang/lib/redis"
 	"jd_workout_golang/lib/file"
+	"jd_workout_golang/lib/redis"
 	"log"
 	"os"
 	"time"
@@ -65,12 +65,13 @@ func SetupRouter() *gin.Engine {
 	r.Use(middleware.FailResponseAlert())
 
 	r.GET("/verify-email", authAction.VerifyEmail)
-	r.POST("/forget-password", authAction.ForgetPasswordAction)
 
 	// 註冊 router group
 	apiGroup := r.Group("/api/v1")
 
 	apiGroup.GET("/app/version", getAppVersion)
+
+	apiGroup.POST("/forget-password", authAction.ForgetPasswordAction)
 
 	// 註冊 user router
 	router.RegisterUser(apiGroup)

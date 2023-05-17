@@ -305,6 +305,46 @@ const docTemplate = `{
                 }
             }
         },
+        "/forget-password": {
+            "post": {
+                "description": "user forget password",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "forget password",
+                "parameters": [
+                    {
+                        "description": "forgetPassword",
+                        "name": "forgetPassword",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/auth.ForgetPassword"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"message\": \"forget password success\"}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "422": {
+                        "description": "{\"message\": \"查無此 email\"}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/login": {
             "post": {
                 "description": "Logs in a user with the provided email and password, and generates a JWT token for the user",
@@ -644,6 +684,17 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "auth.ForgetPassword": {
+            "type": "object",
+            "required": [
+                "email"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string"
+                }
+            }
+        },
         "auth.LoginWithGoogleAccessTokenForm": {
             "type": "object",
             "required": [

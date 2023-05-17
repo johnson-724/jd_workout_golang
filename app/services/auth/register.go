@@ -100,7 +100,7 @@ func storeUser(u *models.User, db *gorm.DB) *models.User {
 	return u
 }
 
-func generateVerifyEmail(user *models.User) *error {
+func generateVerifyEmail(user *models.User) error {
 	token, _ := jwtHelper.GenerateToken(user)
 	baseUrl := os.Getenv("APP_URL") + "/verify-email?email=%s&token=%s"
 
