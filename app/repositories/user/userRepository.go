@@ -19,6 +19,18 @@ func GetUserByEmail(email string) (*models.User, error) {
 	return &user, nil
 }
 
+func GetUserById(id uint) (*models.User, error) {
+	user := models.User{}
+
+	result := db.Connection.Where("id = ?", id).First(&user)
+
+	if result.Error != nil && result.Error == gorm.ErrRecordNotFound {
+		return nil, result.Error
+	}
+
+	return &user, nil
+}
+
 func Update(user *models.User) error {
 	result := db.Connection.Save(user)
 

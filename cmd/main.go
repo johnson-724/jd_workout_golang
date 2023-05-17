@@ -72,6 +72,7 @@ func SetupRouter() *gin.Engine {
 	apiGroup.GET("/app/version", getAppVersion)
 
 	apiGroup.POST("/forget-password", authAction.ForgetPasswordAction)
+	apiGroup.POST("/reset-password", authAction.ForgetPasswordAction)
 
 	// 註冊 user router
 	router.RegisterUser(apiGroup)

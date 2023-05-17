@@ -1,17 +1,26 @@
 package auth
 
 import (
-	"github.com/gin-gonic/gin"
+	"fmt"
+	"jd_workout_golang/app/middleware"
 	"jd_workout_golang/app/models"
 	repo "jd_workout_golang/app/repositories/user"
-	email "jd_workout_golang/lib/Email"
 	"jd_workout_golang/app/services/jwtHelper"
+	email "jd_workout_golang/lib/Email"
 	"os"
-	"fmt"
+
+	"github.com/gin-gonic/gin"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type ForgetPassword struct {
 	Email string `json:"email" form:"email" binding:"required"`
+}
+
+type ResetPassword struct {
+	Passowrd        string `json:"password" form:"password" binding:"required"`
+	NewPassword     string `json:"newPassword" form:"newPassword" binding:"required"`
+	ConfirmPassword string `json:"confirmPassword" form:"confirmPassword" binding:"required"`
 }
 
 // ForgetPasswordAction forget password API
@@ -65,12 +74,59 @@ func ForgetPasswordAction(c *gin.Context) {
 	})
 }
 
+func ResetPassowrd(c *gin.Context) {
+	restPassword := ResetPassword{}
+	if err := c.ShouldBind(&restPassword); err != nil {
+		c.JSON(422, gin.H{
+			"message": "缺少欄位",
+			"error": err.Error(),
+		})
+
+		c.Abort()
+
+		return
+	}
+
+	if restPassword.NewPassword != restPassword.ConfirmPassword {
+		c.JSON(422, gin.H{
+			"message": "密碼不一致",
+		})
+
+		c.Abort()
+
+		return
+	}
+
+	user, e := repo.GetUserById(middleware.Uid)
+
+	if e != nil {
+		c.JSON(422, gin.H{
+			"message": "重置無效",
+		})
+
+		c.Abort()
+
+		return
+	}
+
+	hash, _ := bcrypt.GenerateFromPassword([]byte(restPassword.NewPassword), bcrypt.DefaultCost)
+
+	user.Password = string(hash)
+	user.ResetPassword = 0
+
+	repo.Update(user)
+
+	c.JSON(200, gin.H{
+		"message": "密碼修改成功",
+	})
+}
+
 func sendForgetPassword(u *models.User) error {
 	payload := map[string]interface{}{
 		"method": "forgetPassword",
 	}
 
-	token,err := jwtHelper.GenerateTokenWithPayload(u, payload)
+	token, err := jwtHelper.GenerateTokenWithPayload(u, payload)
 
 	if err != nil {
 		return err
