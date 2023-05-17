@@ -28,21 +28,21 @@ type equipExpand struct {
 	models.Equip    `json:"equip"`
 	MaxWeightRecord maxWeightRecord     `json:"maxWeightRecord"`
 	MaxVolumeRecord lastMaxWeightRecord `json:"maxVolumeRecord"`
-	LastRecords []recentRecord `json:"lastRecords"`
+	LastRecords     []recentRecord      `json:"lastRecords"`
 }
 
 type maxWeightRecord struct {
 	ID        uint    `json:"id"`
 	Weight    float32 `json:"weight"`
 	Reps      uint    `json:"reps"`
-	DayVolumn float32 `json:"dayVolumn"`
+	DayVolume float32 `json:"dayVolume"`
 }
 
 type lastMaxWeightRecord struct {
 	ID            uint    `json:"id"`
 	MaxWeight     float32 `json:"maxWeight"`
 	MaxWeightReps uint    `json:"maxWeightReps"`
-	DayVolumn     float32 `json:"dayVolumn"`
+	DayVolume     float32 `json:"dayVolume"`
 }
 
 type recentRecord struct {
@@ -135,13 +135,13 @@ func List(c *gin.Context) {
 				ID:        hash[v.ID].ID,
 				Weight:    hash[v.ID].Weight,
 				Reps:      hash[v.ID].Reps,
-				DayVolumn: float32(hash[v.ID].Volumn),
+				DayVolume: float32(hash[v.ID].Volumn),
 			},
 			MaxVolumeRecord: lastMaxWeightRecord{
 				ID:            hash[v.ID].ID,
 				MaxWeight:     lastHash[v.ID].Weight,
 				MaxWeightReps: lastHash[v.ID].Reps,
-				DayVolumn:     float32(lastHash[v.ID].Volumn),
+				DayVolume:     float32(lastHash[v.ID].Volumn),
 			},
 			LastRecords: recentHash[v.ID],
 		})

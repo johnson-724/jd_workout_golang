@@ -47,7 +47,7 @@ definitions:
     type: object
   equip.lastMaxWeightRecord:
     properties:
-      dayVolumn:
+      dayVolume:
         type: number
       id:
         type: integer
@@ -58,7 +58,7 @@ definitions:
     type: object
   equip.maxWeightRecord:
     properties:
-      dayVolumn:
+      dayVolume:
         type: number
       id:
         type: integer

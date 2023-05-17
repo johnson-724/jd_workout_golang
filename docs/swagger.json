@@ -705,7 +705,7 @@
         "equip.lastMaxWeightRecord": {
             "type": "object",
             "properties": {
-                "dayVolumn": {
+                "dayVolume": {
                     "type": "number"
                 },
                 "id": {
@@ -722,7 +722,7 @@
         "equip.maxWeightRecord": {
             "type": "object",
             "properties": {
-                "dayVolumn": {
+                "dayVolume": {
                     "type": "number"
                 },
                 "id": {

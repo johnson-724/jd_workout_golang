@@ -717,7 +717,7 @@ const docTemplate = `{
         "equip.lastMaxWeightRecord": {
             "type": "object",
             "properties": {
-                "dayVolumn": {
+                "dayVolume": {
                     "type": "number"
                 },
                 "id": {
@@ -734,7 +734,7 @@ const docTemplate = `{
         "equip.maxWeightRecord": {
             "type": "object",
             "properties": {
-                "dayVolumn": {
+                "dayVolume": {
                     "type": "number"
                 },
                 "id": {
