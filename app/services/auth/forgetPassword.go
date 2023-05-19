@@ -5,10 +5,9 @@ import (
 	"jd_workout_golang/app/middleware"
 	"jd_workout_golang/app/models"
 	repo "jd_workout_golang/app/repositories/user"
-	"jd_workout_golang/app/services/jwtHelper"
 	email "jd_workout_golang/lib/Email"
 	"os"
-
+	helper "jd_workout_golang/lib/helper"
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -63,9 +62,12 @@ func ForgetPasswordAction(c *gin.Context) {
 	}
 
 	user.ResetPassword = 1
-	user.Password = ""
+	user.Password = helper.RandString(8)
 
 	sendForgetPassword(user)
+
+	hash, _ := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
+	user.Password = string(hash)
 
 	repo.Update(user)
 
@@ -122,28 +124,16 @@ func ResetPassowrd(c *gin.Context) {
 }
 
 func sendForgetPassword(u *models.User) error {
-	payload := map[string]interface{}{
-		"method": "forgetPassword",
-	}
-
-	token, err := jwtHelper.GenerateTokenWithPayload(u, payload)
-
-	if err != nil {
-		return err
-	}
-
-	baseUrl := os.Getenv("APP_URL") + "/reset-password?email=%s&token=%s"
-
 	mail := email.Email{
 		FromName:  os.Getenv("EMAIL_FROM_NAME"),
 		FromEmail: os.Getenv("EMAIL_FROM_ADDRESS"),
 		ToEmail:   u.Email,
 		ToName:    u.Username,
 		Subject:   "JD Workout 密碼重置信",
-		Content:   fmt.Sprintf("請點擊以下連結重置密碼: %s", fmt.Sprintf(baseUrl, u.Email, token)),
+		Content:   fmt.Sprintf("重置密碼: %s\n請儘速登入並修改密碼", fmt.Sprintf(u.Password)),
 	}
 
-	err = email.Send(mail)
+	err := email.Send(mail)
 
 	if err != nil {
 		return err
