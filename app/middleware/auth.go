@@ -26,6 +26,7 @@ func ValidateToken(c *gin.Context) {
 
 	if !ok {
 		c.JSON(http.StatusForbidden, gin.H{
+			"message": message,
 			"error": message,
 		})
 

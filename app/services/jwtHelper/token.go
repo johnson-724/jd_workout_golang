@@ -6,6 +6,7 @@ import (
 	"os"
 	"strings"
 	"time"
+
 	jwt "github.com/golang-jwt/jwt/v5"
 	env "github.com/joho/godotenv"
 )
@@ -64,7 +65,7 @@ func ValidateToken(tokenString string, uid *uint) (string, bool) {
 		return err.Error(), false
 	}
 
-	if claims["restPassword"] == 1 {
+	if int16(claims["restPassword"].(float64)) == 1 {
 		return fmt.Errorf("請先重置密碼").Error(), false
 	}
 
