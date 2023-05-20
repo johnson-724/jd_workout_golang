@@ -32,13 +32,36 @@ func ValidateToken(c *gin.Context) {
 		})
 
 		c.Abort()
-		
+
 		return
 	}
-	
+
 	user, _ := repo.GetUserById(Uid)
-	
-	// password forgeted but not reset
+
+	if res.ResetPassword == 1 && user.ResetPassword == 1 {
+		c.JSON(http.StatusForbidden, gin.H{
+			"message": "請先重設密碼",
+			"error":   "請先重設密碼",
+		})
+
+		c.Abort()
+
+		return
+	}
+
+	// password has been reset
+	if res.ResetPassword == 1 && user.ResetPassword == 0 {
+		c.JSON(http.StatusForbidden, gin.H{
+			"message": "請重新登入",
+			"error":   "請重新登入",
+		})
+
+		c.Abort()
+
+		return
+	}
+
+	// password has been forgotten but not reset
 	// fresh token
 	if user.ResetPassword == 1 {
 		c.JSON(http.StatusUnauthorized, gin.H{
@@ -50,18 +73,6 @@ func ValidateToken(c *gin.Context) {
 
 		return
 	}
-
-	if res.ResetPassword == 1{
-		c.JSON(http.StatusUnauthorized, gin.H{
-			"message": "密碼已修改，請重新登入",
-			"error":   "密碼已修改，請重新登入",
-		})
-
-		c.Abort()
-
-		return
-	}
-
 
 	c.Next()
 }
