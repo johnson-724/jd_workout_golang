@@ -35,7 +35,7 @@ func TestUserWithoutToken(t *testing.T) {
 		Error string `json:"error"`
 	}{}
 
-	assert.Equal(t, 403, w.Code)
+	assert.Equal(t, http.StatusUnauthorized, w.Code)
 	// assert.Equal(t, "JWT token is empty", w.Body.String())
 	json.Unmarshal((w.Body.Bytes()), &response)
 	assert.Equal(t, "JWT token is empty", response.Error)
@@ -47,9 +47,9 @@ func TestUserWithInvalidToken(t *testing.T) {
 		status int
 		error string
 	}{
-		{"test123", 403, "invalid token"},
-		{"Bearer test1234", 403, "token is malformed: token contains an invalid number of segments"},
-		{"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOjN9.mX1ysOl8jt8Rdg2uYNX8B0dhnKsqfyy2UTT28_1pwZQ123", 403, "token signature is invalid: signature is invalid"},
+		{"test123", 401, "invalid token"},
+		{"Bearer test1234", 401, "token is malformed: token contains an invalid number of segments"},
+		{"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOjN9.mX1ysOl8jt8Rdg2uYNX8B0dhnKsqfyy2UTT28_1pwZQ123", 401, "token signature is invalid: signature is invalid"},
 	}
 
 	// 建立 response & request

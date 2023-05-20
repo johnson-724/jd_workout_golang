@@ -1,30 +1,57 @@
 package jwtHelper
 
 import (
+	"fmt"
+	"jd_workout_golang/app/models"
+	"os"
+	"strings"
+	"time"
+
 	jwt "github.com/golang-jwt/jwt/v5"
 	env "github.com/joho/godotenv"
-	"os"
-	"jd_workout_golang/app/models"
-	"time"
-	"strings"
 )
 
-func GenerateToken (u *models.User) (string, error) {
+type JwtResult struct {
+	Uid           uint  `json:"uid"`
+	ResetPassword int16 `json:"resetPassword"`
+	Error         error
+}
+
+func GenerateTokenWithPayload(u *models.User, payload map[string]interface{}) (string, error) {
+	claims := jwt.MapClaims{
+		"uid": u.ID,
+		"exp": time.Now().Add(time.Hour * 24).Unix(),
+	}
+
+	for k, v := range payload {
+		claims[k] = v
+	}
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, &claims)
+
+	return token.SignedString([]byte(os.Getenv("APP_KEY")))
+}
+
+func GenerateToken(u *models.User) (string, error) {
 	env.Load()
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"uid": u.ID,
-		"exp": time.Now().Add(time.Hour * 24).Unix(),
+		"uid":          u.ID,
+		"restPassword": u.ResetPassword,
+		"exp":          time.Now().Add(time.Hour * 24).Unix(),
 	})
 
 	return token.SignedString([]byte(os.Getenv("APP_KEY")))
 }
 
-func ValidateToken (tokenString string, uid *uint) (string, bool) {
+func ParseJwtToken(tokenString string, uid *uint) (JwtResult, bool) {
+	var jwtResult JwtResult
 	token, ok := parseToken(tokenString)
 
 	if !ok {
-		return "invalid token", false
+		jwtResult.Error = fmt.Errorf("invalid token")
+
+		return jwtResult, false
 	}
 
 	jwtToken, err := jwt.Parse(
@@ -36,31 +63,38 @@ func ValidateToken (tokenString string, uid *uint) (string, bool) {
 
 			return []byte(os.Getenv("APP_KEY")), nil
 		})
-	
+
 	if err != nil {
-		return err.Error(), false
+		jwtResult.Error = err
+
+		return jwtResult, false
 	}
 
 	claims, ok := jwtToken.Claims.(jwt.MapClaims)
 
 	if !ok || !jwtToken.Valid {
-		return err.Error(), false
+		jwtResult.Error = err
+
+		return jwtResult, false
 	}
-	
-	println(uint(claims["uid"].(float64)))
 
 	uidPayload, _ := claims["uid"].(float64)
 
 	*uid = uint(uidPayload)
-	
-	return "", true
+
+	jwtResult.Uid = *uid
+	jwtResult.ResetPassword = int16(claims["restPassword"].(float64))
+
+	println(jwtResult.ResetPassword)
+
+	return jwtResult, true
 }
 
-func parseToken (tokenString string) (string, bool) {
+func parseToken(tokenString string) (string, bool) {
 
 	tokenMap := strings.Split(tokenString, "Bearer ")
 
-	if (len(tokenMap) != 2) {
+	if len(tokenMap) != 2 {
 		return "", false
 	}
 

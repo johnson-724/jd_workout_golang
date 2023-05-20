@@ -8,10 +8,11 @@ import (
 	"jd_workout_golang/app/middleware"
 	authAction "jd_workout_golang/app/services/auth"
 	docs "jd_workout_golang/docs"
+	auth "jd_workout_golang/app/middleware"
 	"jd_workout_golang/internal/router"
 	"jd_workout_golang/lib/database"
-	"jd_workout_golang/lib/redis"
 	"jd_workout_golang/lib/file"
+	"jd_workout_golang/lib/redis"
 	"log"
 	"os"
 	"time"
@@ -71,12 +72,15 @@ func SetupRouter() *gin.Engine {
 
 	apiGroup.GET("/app/version", getAppVersion)
 
+	apiGroup.POST("/forget-password", authAction.ForgetPasswordAction)
+
 	// 註冊 user router
 	router.RegisterUser(apiGroup)
 
-	router.RegisterEquip(apiGroup)
-
+	router.RegisterEquip(apiGroup)	
 	router.RegisterRecord(apiGroup)
+
+	apiGroup.Use(auth.VaildateResetPassword).POST("/reset-password", authAction.ResetPassowrdAction)
 
 	return r
 }

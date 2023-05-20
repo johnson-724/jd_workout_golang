@@ -15,7 +15,7 @@ type Email struct {
 	Content   string
 }
 
-func Send(email Email) *error {
+func Send(email Email) error {
 	from := mail.NewEmail(email.FromName, email.FromEmail)
 	to := mail.NewEmail(email.ToName, email.ToEmail)
 
@@ -28,7 +28,7 @@ func Send(email Email) *error {
 	response, err := client.Send(message)
 
 	if err != nil || response.StatusCode != 202 {
-		return &err
+		return err
 	}
 
 	return nil

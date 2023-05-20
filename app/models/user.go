@@ -15,4 +15,5 @@ type User struct {
 	Email    string `json:"email" gorm:"unique"`
 	Password string `json:"password" gorm:"size:64"`
 	EmailVerified int16
+	ResetPassword int16 `gorm:"default:0"`
 }

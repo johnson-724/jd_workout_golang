@@ -1,10 +1,30 @@
 definitions:
+  auth.ForgetPassword:
+    properties:
+      email:
+        type: string
+    required:
+    - email
+    type: object
   auth.LoginWithGoogleAccessTokenForm:
     properties:
       token:
         type: string
     required:
     - token
+    type: object
+  auth.ResetPassword:
+    properties:
+      confirmPassword:
+        type: string
+      newPassword:
+        type: string
+      password:
+        type: string
+    required:
+    - confirmPassword
+    - newPassword
+    - password
     type: object
   auth.registerForm:
     properties:
@@ -393,6 +413,32 @@ paths:
       summary: update equip weight
       tags:
       - Equip
+  /forget-password:
+    post:
+      consumes:
+      - application/json
+      description: user forget password
+      parameters:
+      - description: forgetPassword
+        in: body
+        name: forgetPassword
+        required: true
+        schema:
+          $ref: '#/definitions/auth.ForgetPassword'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"message": "forget password success"}'
+          schema:
+            type: string
+        "422":
+          description: '{"message": "查無此 email"}'
+          schema:
+            type: string
+      summary: forget password
+      tags:
+      - Auth
   /login:
     post:
       consumes:
@@ -609,6 +655,34 @@ paths:
           schema:
             type: string
       summary: register
+      tags:
+      - Auth
+  /reset-password:
+    post:
+      consumes:
+      - application/json
+      description: user reset password
+      parameters:
+      - description: resetPassword
+        in: body
+        name: resetPassword
+        required: true
+        schema:
+          $ref: '#/definitions/auth.ResetPassword'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"message": "密碼修改成功"}'
+          schema:
+            type: string
+        "422":
+          description: '{"message": "密碼修改失敗", "error": "密碼不一致"}'
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: reset password
       tags:
       - Auth
 securityDefinitions:
