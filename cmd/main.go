@@ -80,7 +80,7 @@ func SetupRouter() *gin.Engine {
 	router.RegisterEquip(apiGroup)	
 	router.RegisterRecord(apiGroup)
 
-	apiGroup.Use(auth.ValidateToken).POST("/reset-password", authAction.ForgetPasswordAction)
+	apiGroup.Use(auth.VaildateResetPassword).POST("/reset-password", authAction.ResetPassowrdAction)
 
 	return r
 }

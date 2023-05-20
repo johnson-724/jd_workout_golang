@@ -5,19 +5,18 @@ import (
 	"jd_workout_golang/app/models"
 	"jd_workout_golang/app/services/jwtHelper"
 	"jd_workout_golang/lib/database"
+
 	"github.com/gin-gonic/gin"
 )
 
 func VerifyEmail(c *gin.Context) {
 	user := models.User{}
 	uid := uint(0)
-	
-	err, res := jwtHelper.ValidateToken(fmt.Sprintf("Bearer %s", c.Query("token")), &uid)
 
-	if !res {
+	if res, ok := jwtHelper.ParseJwtToken(fmt.Sprintf("Bearer %s", c.Query("token")), &uid); !ok {
 		c.JSON(422, gin.H{
 			"message": "驗證連結無效 token",
-			"error": err,
+			"error":   res.Error.Error(),
 		})
 
 		c.Abort()

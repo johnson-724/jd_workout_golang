@@ -13,6 +13,19 @@ definitions:
     required:
     - token
     type: object
+  auth.ResetPassword:
+    properties:
+      confirmPassword:
+        type: string
+      newPassword:
+        type: string
+      password:
+        type: string
+    required:
+    - confirmPassword
+    - newPassword
+    - password
+    type: object
   auth.registerForm:
     properties:
       email:
@@ -642,6 +655,34 @@ paths:
           schema:
             type: string
       summary: register
+      tags:
+      - Auth
+  /reset-password:
+    post:
+      consumes:
+      - application/json
+      description: user reset password
+      parameters:
+      - description: resetPassword
+        in: body
+        name: resetPassword
+        required: true
+        schema:
+          $ref: '#/definitions/auth.ResetPassword'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"message": "密碼修改成功"}'
+          schema:
+            type: string
+        "422":
+          description: '{"message": "密碼修改失敗", "error": "密碼不一致"}'
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: reset password
       tags:
       - Auth
 securityDefinitions:

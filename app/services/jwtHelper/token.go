@@ -11,6 +11,12 @@ import (
 	env "github.com/joho/godotenv"
 )
 
+type JwtResult struct {
+	Uid           uint  `json:"uid"`
+	ResetPassword int16 `json:"resetPassword"`
+	Error         error
+}
+
 func GenerateTokenWithPayload(u *models.User, payload map[string]interface{}) (string, error) {
 	claims := jwt.MapClaims{
 		"uid": u.ID,
@@ -38,11 +44,14 @@ func GenerateToken(u *models.User) (string, error) {
 	return token.SignedString([]byte(os.Getenv("APP_KEY")))
 }
 
-func ValidateToken(tokenString string, uid *uint) (string, bool) {
+func ParseJwtToken(tokenString string, uid *uint) (JwtResult, bool) {
+	var jwtResult JwtResult
 	token, ok := parseToken(tokenString)
 
 	if !ok {
-		return "invalid token", false
+		jwtResult.Error = fmt.Errorf("invalid token")
+
+		return jwtResult, false
 	}
 
 	jwtToken, err := jwt.Parse(
@@ -56,26 +65,29 @@ func ValidateToken(tokenString string, uid *uint) (string, bool) {
 		})
 
 	if err != nil {
-		return err.Error(), false
+		jwtResult.Error = err
+
+		return jwtResult, false
 	}
 
 	claims, ok := jwtToken.Claims.(jwt.MapClaims)
 
 	if !ok || !jwtToken.Valid {
-		return err.Error(), false
-	}
+		jwtResult.Error = err
 
-	if int16(claims["restPassword"].(float64)) == 1 {
-		return fmt.Errorf("請先重置密碼").Error(), false
+		return jwtResult, false
 	}
-
-	println(uint(claims["uid"].(float64)))
 
 	uidPayload, _ := claims["uid"].(float64)
 
 	*uid = uint(uidPayload)
 
-	return "", true
+	jwtResult.Uid = *uid
+	jwtResult.ResetPassword = int16(claims["restPassword"].(float64))
+
+	println(jwtResult.ResetPassword)
+
+	return jwtResult, true
 }
 
 func parseToken(tokenString string) (string, bool) {

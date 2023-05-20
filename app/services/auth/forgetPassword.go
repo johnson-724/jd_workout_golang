@@ -17,7 +17,7 @@ type ForgetPassword struct {
 }
 
 type ResetPassword struct {
-	Passowrd        string `json:"password" form:"password" binding:"required"`
+	Password        string `json:"password" form:"password" binding:"required"`
 	NewPassword     string `json:"newPassword" form:"newPassword" binding:"required"`
 	ConfirmPassword string `json:"confirmPassword" form:"confirmPassword" binding:"required"`
 }
@@ -76,7 +76,18 @@ func ForgetPasswordAction(c *gin.Context) {
 	})
 }
 
-func ResetPassowrd(c *gin.Context) {
+// ResetPassowrd reset password API
+// @Summary reset password
+// @Description user reset password
+// @Tags Auth
+// @Accept json
+// @Produce json
+// @Param resetPassword body ResetPassword true "resetPassword"
+// @Success 200 {string} json "{"message": "密碼修改成功"}"
+// @Failure 422 {string} json "{"message": "密碼修改失敗", "error": "密碼不一致"}"
+// @Router /reset-password [post]
+// @Security Bearer
+func ResetPassowrdAction(c *gin.Context) {
 	restPassword := ResetPassword{}
 	if err := c.ShouldBind(&restPassword); err != nil {
 		c.JSON(422, gin.H{
@@ -101,7 +112,9 @@ func ResetPassowrd(c *gin.Context) {
 
 	user, e := repo.GetUserById(middleware.Uid)
 
-	if e != nil {
+	error := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(restPassword.Password))
+
+	if e != nil || error != nil {
 		c.JSON(422, gin.H{
 			"message": "重置無效",
 		})
