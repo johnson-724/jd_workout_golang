@@ -5,9 +5,10 @@ import (
 	"jd_workout_golang/app/middleware"
 	"jd_workout_golang/app/models"
 	repo "jd_workout_golang/app/repositories/user"
+	"jd_workout_golang/app/services/jwtHelper"
 	email "jd_workout_golang/lib/Email"
-	"os"
 	helper "jd_workout_golang/lib/helper"
+	"os"
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -83,7 +84,7 @@ func ForgetPasswordAction(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param resetPassword body ResetPassword true "resetPassword"
-// @Success 200 {string} json "{"message": "密碼修改成功"}"
+// @Success 200 {string} json "{"message": "密碼修改成功", "token": "jwt token"}"
 // @Failure 422 {string} json "{"message": "密碼修改失敗", "error": "密碼不一致"}"
 // @Router /reset-password [post]
 // @Security Bearer
@@ -131,8 +132,11 @@ func ResetPasswordAction(c *gin.Context) {
 
 	repo.Update(user)
 
+	token, _ := jwtHelper.GenerateToken(user)
+
 	c.JSON(200, gin.H{
 		"message": "密碼修改成功",
+		"token":   token,
 	})
 }
 
