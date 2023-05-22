@@ -22,7 +22,7 @@ import (
 // @Produce json
 // @Param email formData string true "User email"
 // @Param password formData string true "User password"
-// @Success 200 {string} string "{'message': 'login success', 'token': 'JWT token'}"
+// @Success 200 {string} string "{'message': 'login success', 'token': 'JWT token', 'reset': '0'}"
 // @Failure 422 {string} string "{'message': '缺少必要欄位', 'error': 'error message'}"
 // @Failure 422 {string} string "{'message': '帳號或密碼錯誤', 'error': 'error message'}"
 // @Router /login [post]
@@ -67,7 +67,8 @@ func LoginAction(c *gin.Context) {
 
 	c.JSON(200, gin.H{
 		"message": "login success",
-		"token":   token,
+		"token":  token,
+		"reset":  user.ResetPassword,
 	})
 }
 
