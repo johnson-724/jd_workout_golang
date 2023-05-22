@@ -77,7 +77,7 @@ func ValidateToken(c *gin.Context) {
 	c.Next()
 }
 
-func VaildateResetPassword(c *gin.Context) {
+func ValidateResetPassword(c *gin.Context) {
 	val := c.GetHeader("Authorization")
 
 	if val == "" {

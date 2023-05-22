@@ -87,7 +87,7 @@ func ForgetPasswordAction(c *gin.Context) {
 // @Failure 422 {string} json "{"message": "密碼修改失敗", "error": "密碼不一致"}"
 // @Router /reset-password [post]
 // @Security Bearer
-func ResetPassowrdAction(c *gin.Context) {
+func ResetPasswordAction(c *gin.Context) {
 	restPassword := ResetPassword{}
 	if err := c.ShouldBind(&restPassword); err != nil {
 		c.JSON(422, gin.H{
