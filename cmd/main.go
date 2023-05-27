@@ -62,6 +62,8 @@ func init() {
 func SetupRouter() *gin.Engine {
 	r := gin.Default()
 
+	r.Static("/images", "./public/images")
+
 	if os.Getenv("API_RATE_ON") == "true" {
 		r.Use(middleware.ApiRateLimit)
 	}
