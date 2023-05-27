@@ -57,7 +57,20 @@ func GetRecord(recordId uint64, uid uint) (*models.Record, error) {
 	return &record, nil
 }
 
-func GetRecords(page pageinate.PaginateCondition, uid uint) (*[]RecordByDate, *int64, error) {
+func GetRecordList(page pageinate.PaginateCondition, uid uint) (*[]models.Record, *int64, error) {
+	records := []models.Record{}
+	count := int64(0)
+
+	query := db.Connection.Model(models.Record{}).Where("user_id = ?", uid)
+
+	query.Count(&count)
+
+	query.Scopes(pageinate.Paginate(page.Page, page.PerPage)).Find(&records)
+
+	return &records, &count, nil
+}
+
+func GetDateSummaryRecords(page pageinate.PaginateCondition, uid uint) (*[]RecordByDate, *int64, error) {
 	data := []RecordByDate{}
 	groupBy := []struct {
 		Date string `json:"date"`
@@ -87,11 +100,11 @@ func GetRecords(page pageinate.PaginateCondition, uid uint) (*[]RecordByDate, *i
 
 type RecordWithVolumn struct {
 	models.Record
-	Ids  string    `json:"ids"`
+	Ids    string  `json:"ids"`
 	Volumn float32 `json:"volumn"`
-	Date  string  `json:"date"`
-	Count int     `json:"sets"`
-	Notes string  `json:"notes"`
+	Date   string  `json:"date"`
+	Count  int     `json:"sets"`
+	Notes  string  `json:"notes"`
 }
 
 func GetMaxRecord(equips []uint, before string) *[]RecordWithVolumn {
