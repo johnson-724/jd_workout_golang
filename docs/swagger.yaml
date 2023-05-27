@@ -141,6 +141,29 @@ definitions:
       weights:
         type: string
     type: object
+  models.Record:
+    properties:
+      createdAt:
+        type: string
+      equip:
+        $ref: '#/definitions/models.Equip'
+      equip_id:
+        type: integer
+      id:
+        type: integer
+      name:
+        type: string
+      note:
+        type: string
+      reps:
+        type: integer
+      updatedAt:
+        type: string
+      userId:
+        type: integer
+      weight:
+        type: number
+    type: object
   record.createBody:
     properties:
       equip_id:
@@ -169,6 +192,19 @@ definitions:
       start:
         type: string
     type: object
+  record.dateSummaryListResponse:
+    properties:
+      currentPage:
+        type: integer
+      data:
+        items:
+          $ref: '#/definitions/record.dateGroup'
+        type: array
+      perPage:
+        type: integer
+      total:
+        type: integer
+    type: object
   record.equipGroup:
     properties:
       id:
@@ -181,6 +217,19 @@ definitions:
         items:
           $ref: '#/definitions/record.recordDetail'
         type: array
+    type: object
+  record.listResponse:
+    properties:
+      currentPage:
+        type: integer
+      data:
+        items:
+          $ref: '#/definitions/models.Record'
+        type: array
+      perPage:
+        type: integer
+      total:
+        type: integer
     type: object
   record.recordDetail:
     properties:
@@ -198,19 +247,6 @@ definitions:
         type: integer
       weight:
         type: number
-    type: object
-  record.recordListResponse:
-    properties:
-      currentPage:
-        type: integer
-      data:
-        items:
-          $ref: '#/definitions/record.dateGroup'
-        type: array
-      perPage:
-        type: integer
-      total:
-        type: integer
     type: object
   record.updateBody:
     properties:
@@ -499,6 +535,37 @@ paths:
       tags:
       - Auth
   /record:
+    get:
+      consumes:
+      - application/json
+      description: record list for personal user
+      parameters:
+      - in: query
+        name: currentPage
+        type: integer
+      - in: query
+        name: perPage
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/record.listResponse'
+        "403":
+          description: '{''message'': ''jwt token error'', ''error'': ''error message''}'
+          schema:
+            type: string
+        "422":
+          description: '{''message'': ''缺少必要欄位'', ''error'': ''error message''}'
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: record list
+      tags:
+      - Record
     post:
       consumes:
       - application/json
@@ -615,7 +682,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/record.recordListResponse'
+            $ref: '#/definitions/record.dateSummaryListResponse'
         "403":
           description: '{''message'': ''jwt token error'', ''error'': ''error message''}'
           schema:

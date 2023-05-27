@@ -57,6 +57,19 @@ func GetRecord(recordId uint64, uid uint) (*models.Record, error) {
 	return &record, nil
 }
 
+func GetRecordList(page pageinate.PaginateCondition, uid uint) (*[]models.Record, *int64, error) {
+	records := []models.Record{}
+	count := int64(0)
+
+	query := db.Connection.Model(models.Record{}).Where("user_id = ?", uid)
+
+	query.Count(&count)
+
+	query.Scopes(pageinate.Paginate(page.Page, page.PerPage)).Find(&records)
+
+	return &records, &count, nil
+}
+
 func GetDateSummaryRecords(page pageinate.PaginateCondition, uid uint) (*[]RecordByDate, *int64, error) {
 	data := []RecordByDate{}
 	groupBy := []struct {
