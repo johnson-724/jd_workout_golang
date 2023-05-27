@@ -17,7 +17,7 @@ type recordListRequest struct {
 	PerPage int ` json:"perPage" form:"perPage"`
 }
 
-type recordListResponse struct {
+type dateSummaryListResponse struct {
 	Page    int         `json:"currentPage" form:"currentPage"`
 	PerPage int         `json:"perPage" form:"perPage"`
 	Data    []dateGroup `json:"data"`
@@ -31,7 +31,7 @@ type recordListResponse struct {
 // @Accept x-www-form-urlencoded
 // @Produce json
 // @Param equipList query recordListRequest true "equipList"
-// @Success 200 {object} recordListResponse
+// @Success 200 {object} dateSummaryListResponse
 // @Failure 422 {string} string "{'message': '缺少必要欄位', 'error': 'error message'}"
 // @Failure 403 {string} string "{'message': 'jwt token error', 'error': 'error message'}"
 // @Router /record/day-summary [get]f
@@ -71,7 +71,7 @@ func DaySummaryList(c *gin.Context) {
 
 	groupByData := groupByRecord(*data)
 
-	c.JSON(200, recordListResponse{
+	c.JSON(200, dateSummaryListResponse{
 		Page:    paginate.Page,
 		PerPage: paginate.PerPage,
 		Data:    groupByData,
