@@ -460,7 +460,8 @@ paths:
       - application/json
       responses:
         "200":
-          description: '{''message'': ''login success'', ''token'': ''JWT token''}'
+          description: '{''message'': ''login success'', ''token'': ''JWT token'',
+            ''reset'': ''0''}'
           schema:
             type: string
         "422":
@@ -498,37 +499,6 @@ paths:
       tags:
       - Auth
   /record:
-    get:
-      consumes:
-      - application/x-www-form-urlencoded
-      description: record list for personal user
-      parameters:
-      - in: query
-        name: currentPage
-        type: integer
-      - in: query
-        name: perPage
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/record.recordListResponse'
-        "403":
-          description: '{''message'': ''jwt token error'', ''error'': ''error message''}'
-          schema:
-            type: string
-        "422":
-          description: '{''message'': ''缺少必要欄位'', ''error'': ''error message''}'
-          schema:
-            type: string
-      security:
-      - Bearer: []
-      summary: record list
-      tags:
-      - Record
     post:
       consumes:
       - application/json
@@ -627,6 +597,38 @@ paths:
       summary: update record
       tags:
       - Record
+  /record/day-summary:
+    get:
+      consumes:
+      - application/x-www-form-urlencoded
+      description: record list for personal user
+      parameters:
+      - in: query
+        name: currentPage
+        type: integer
+      - in: query
+        name: perPage
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/record.recordListResponse'
+        "403":
+          description: '{''message'': ''jwt token error'', ''error'': ''error message''}'
+          schema:
+            type: string
+        "422":
+          description: '{''message'': ''缺少必要欄位'', ''error'': ''error message''}'
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: day summary list
+      tags:
+      - Record
   /register:
     post:
       consumes:
@@ -673,7 +675,7 @@ paths:
       - application/json
       responses:
         "200":
-          description: '{"message": "密碼修改成功"}'
+          description: '{"message": "密碼修改成功", "token": "jwt token"}'
           schema:
             type: string
         "422":

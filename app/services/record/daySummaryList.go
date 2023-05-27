@@ -24,8 +24,8 @@ type recordListResponse struct {
 	Total   int64       `json:"total"`
 }
 
-// get personal record list
-// @Summary record list
+// get personal day summary list
+// @Summary day summary list
 // @Description record list for personal user
 // @Tags Record
 // @Accept x-www-form-urlencoded
@@ -34,9 +34,9 @@ type recordListResponse struct {
 // @Success 200 {object} recordListResponse
 // @Failure 422 {string} string "{'message': '缺少必要欄位', 'error': 'error message'}"
 // @Failure 403 {string} string "{'message': 'jwt token error', 'error': 'error message'}"
-// @Router /record [get]
+// @Router /record/day-summary [get]f
 // @Security Bearer
-func List(c *gin.Context) {
+func DaySummaryList(c *gin.Context) {
 	paginate := recordListRequest{
 		Page:    1,
 		PerPage: 10,
@@ -94,7 +94,7 @@ type equipGroup struct {
 }
 
 type recordDetail struct {
-	IDS     []uint     `json:"ids"`
+	IDS    []uint   `json:"ids"`
 	Weight float32  `json:"weight"`
 	Reps   int      `json:"reps"`
 	Sets   int      `json:"sets"`
