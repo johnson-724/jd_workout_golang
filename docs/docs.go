@@ -376,7 +376,7 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "{'message': 'login success', 'token': 'JWT token'}",
+                        "description": "{'message': 'login success', 'token': 'JWT token', 'reset': '0'}",
                         "schema": {
                             "type": "string"
                         }
@@ -431,56 +431,6 @@ const docTemplate = `{
             }
         },
         "/record": {
-            "get": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "description": "record list for personal user",
-                "consumes": [
-                    "application/x-www-form-urlencoded"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Record"
-                ],
-                "summary": "record list",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "name": "currentPage",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "name": "perPage",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/record.recordListResponse"
-                        }
-                    },
-                    "403": {
-                        "description": "{'message': 'jwt token error', 'error': 'error message'}",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "422": {
-                        "description": "{'message': '缺少必要欄位', 'error': 'error message'}",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            },
             "post": {
                 "security": [
                     {
@@ -514,6 +464,58 @@ const docTemplate = `{
                         "description": "{'message': 'create success', 'id' : '1'}",
                         "schema": {
                             "type": "string"
+                        }
+                    },
+                    "403": {
+                        "description": "{'message': 'jwt token error', 'error': 'error message'}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "422": {
+                        "description": "{'message': '缺少必要欄位', 'error': 'error message'}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/record/day-summary": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "record list for personal user",
+                "consumes": [
+                    "application/x-www-form-urlencoded"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Record"
+                ],
+                "summary": "day summary list",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "name": "currentPage",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "perPage",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/record.recordListResponse"
                         }
                     },
                     "403": {
@@ -713,7 +715,7 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "{\"message\": \"密碼修改成功\"}",
+                        "description": "{\"message\": \"密碼修改成功\", \"token\": \"jwt token\"}",
                         "schema": {
                             "type": "string"
                         }
