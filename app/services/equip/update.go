@@ -16,10 +16,11 @@ type updateFrom struct {
 // @Summary update equip
 // @Description update equip for personal user
 // @Tags Equip
-// @Accept json
+// @Accept x-www-form-urlencoded
 // @Produce json
 // @Param id path integer true "equip id"
-// @Param weights body updateFrom false "note for equip"
+// @Param weights formData updateFrom false "note for equip"
+// @Param image formData file false "image for equip"
 // @Success 200 {string} string "{'message': 'create success'}"
 // @Failure 422 {string} string "{'message': '缺少必要欄位', 'error': 'error message'}"
 // @Failure 403 {string} string "{'message': 'jwt token error', 'error': 'error message'}"
@@ -68,6 +69,21 @@ func UpdateEquip(c *gin.Context) {
 
 	equip.Name = updateFrom.Name
 	equip.Note = updateFrom.Note
+
+	path, err := StoreFile(c)
+
+	if err != nil {
+		c.JSON(422, gin.H{
+			"message": "file error",
+			"error":   err.Error(),
+		})
+
+		c.Abort()
+
+		return
+	}
+
+	equip.Image = path
 
 	repo.Update(equip)
 

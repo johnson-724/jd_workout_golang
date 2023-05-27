@@ -36,6 +36,7 @@ func Update(equip *models.Equip) error {
 	result := db.Connection.Model(equip).Updates(map[string]interface{}{
 		"name": equip.Name,
 		"note": equip.Note,
+		"image": equip.Image,
 	})
 
 	if result.Error != nil {

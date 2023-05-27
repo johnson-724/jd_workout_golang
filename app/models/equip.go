@@ -14,4 +14,5 @@ type Equip struct {
 	Name    string `json:"name"`
 	Weights string `json:"weights" gorm:"default:null"`
 	Note    string `json:"note" gorm:"default:null"`
+	Image   string `json:"image" gorm:"default:null"`
 }
