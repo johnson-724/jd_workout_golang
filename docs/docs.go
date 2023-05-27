@@ -120,6 +120,12 @@ const docTemplate = `{
                         "description": "note for equip",
                         "name": "note",
                         "in": "formData"
+                    },
+                    {
+                        "type": "file",
+                        "description": "image for equip",
+                        "name": "image",
+                        "in": "formData"
                     }
                 ],
                 "responses": {
@@ -980,6 +986,9 @@ const docTemplate = `{
                 },
                 "id": {
                     "type": "integer"
+                },
+                "image": {
+                    "type": "string"
                 },
                 "name": {
                     "type": "string"
