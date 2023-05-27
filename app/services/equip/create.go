@@ -1,11 +1,11 @@
 package equip
 
 import (
+	"github.com/gin-gonic/gin"
 	"jd_workout_golang/app/middleware"
 	"jd_workout_golang/app/models"
 	repo "jd_workout_golang/app/repositories/equip"
 	fsRepo "jd_workout_golang/app/repositories/file"
-	"github.com/gin-gonic/gin"
 )
 
 // create personal equip with name and note
@@ -23,8 +23,6 @@ import (
 // @Router /equip [post]
 // @Security Bearer
 func CreateEquip(c *gin.Context) {
-	var fs fsRepo.FileStore
-
 	createBody := struct {
 		Name string `json:"name" form:"name" binding:"required"`
 		Note string `json:"note" form:"note"`
@@ -45,29 +43,20 @@ func CreateEquip(c *gin.Context) {
 		Note:   createBody.Note,
 	}
 
-	if file, err := c.FormFile("image"); err == nil {
-		fs = fsRepo.GinFileStore{
-			File:     file,
-			Path:     "images",
-			FileName: file.Filename,
-		}
-	
-		path, err := StoreFile(fs)
+	path, err := StoreFile(c)
 
-		if err != nil {
-			c.JSON(422, gin.H{
-				"message": "create error",
-				"error":   err.Error(),
-			})
-	
-			c.Abort()
-	
-			return
-		} 
+	if err != nil {
+		c.JSON(422, gin.H{
+			"message": "file error",
+			"error":   err.Error(),
+		})
 
-		equip.Image = path
+		c.Abort()
+
+		return
 	}
 
+	equip.Image = path
 
 	id, err := repo.Create(&equip)
 
@@ -88,16 +77,28 @@ func CreateEquip(c *gin.Context) {
 	})
 }
 
-func StoreFile(file fsRepo.FileStore) (string, error) {
-	if extCheck := file.Valdate(); extCheck != nil {
-		
-		return "", extCheck
-	}
+func StoreFile(c *gin.Context) (string, error) {
+	var fs fsRepo.FileStore
 
-	path, err := file.Store()
+	var path string
 
-	if err != nil {
-		return "", err		
+	if file, err := c.FormFile("image"); err == nil {
+		fs = fsRepo.GinFileStore{
+			File:     file,
+			Path:     "images",
+			FileName: file.Filename,
+		}
+
+		if extCheck := fs.Valdate(); extCheck != nil {
+
+			return "", extCheck
+		}
+
+		path, err = fs.Store()
+
+		if err != nil {
+			return "", err
+		}
 	}
 
 	return path, nil
