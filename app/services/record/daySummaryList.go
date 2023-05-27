@@ -56,7 +56,7 @@ func DaySummaryList(c *gin.Context) {
 		PerPage: paginate.PerPage,
 	}
 
-	data, count, err := repo.GetRecords(paginateCondition, middleware.Uid)
+	data, count, err := repo.GetDateSummaryRecords(paginateCondition, middleware.Uid)
 
 	if err != nil {
 		c.JSON(422, gin.H{
