@@ -206,7 +206,7 @@ const docTemplate = `{
                 ],
                 "description": "update equip for personal user",
                 "consumes": [
-                    "application/json"
+                    "application/x-www-form-urlencoded"
                 ],
                 "produces": [
                     "application/json"
@@ -224,12 +224,21 @@ const docTemplate = `{
                         "required": true
                     },
                     {
-                        "description": "note for equip",
-                        "name": "weights",
-                        "in": "body",
-                        "schema": {
-                            "$ref": "#/definitions/equip.updateFrom"
-                        }
+                        "type": "string",
+                        "name": "name",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "note",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "file",
+                        "description": "image for equip",
+                        "name": "image",
+                        "in": "formData"
                     }
                 ],
                 "responses": {
@@ -947,20 +956,6 @@ const docTemplate = `{
                 },
                 "weight": {
                     "type": "number"
-                }
-            }
-        },
-        "equip.updateFrom": {
-            "type": "object",
-            "required": [
-                "name"
-            ],
-            "properties": {
-                "name": {
-                    "type": "string"
-                },
-                "note": {
-                    "type": "string"
                 }
             }
         },
