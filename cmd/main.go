@@ -6,9 +6,9 @@ import (
 	swaggerfiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"jd_workout_golang/app/middleware"
+	auth "jd_workout_golang/app/middleware"
 	authAction "jd_workout_golang/app/services/auth"
 	docs "jd_workout_golang/docs"
-	auth "jd_workout_golang/app/middleware"
 	"jd_workout_golang/internal/router"
 	"jd_workout_golang/lib/database"
 	"jd_workout_golang/lib/file"
@@ -61,7 +61,11 @@ func init() {
 
 func SetupRouter() *gin.Engine {
 	r := gin.Default()
-	r.Use(middleware.ApiRateLimit)
+
+	if os.Getenv("API_RATE_ON") == "true" {
+		r.Use(middleware.ApiRateLimit)
+	}
+
 	r.Use(middleware.Cors())
 	r.Use(middleware.FailResponseAlert())
 
@@ -77,7 +81,7 @@ func SetupRouter() *gin.Engine {
 	// 註冊 user router
 	router.RegisterUser(apiGroup)
 
-	router.RegisterEquip(apiGroup)	
+	router.RegisterEquip(apiGroup)
 	router.RegisterRecord(apiGroup)
 
 	apiGroup.Use(auth.ValidateResetPassword).POST("/reset-password", authAction.ResetPasswordAction)
