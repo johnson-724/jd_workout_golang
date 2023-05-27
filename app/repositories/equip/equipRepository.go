@@ -33,7 +33,10 @@ func Delete(equip *models.Equip) error {
 }
 
 func Update(equip *models.Equip) error {
-	result := db.Connection.Save(equip)
+	result := db.Connection.Model(equip).Updates(map[string]interface{}{
+		"name": equip.Name,
+		"note": equip.Note,
+	})
 
 	if result.Error != nil {
 		return result.Error
@@ -62,7 +65,7 @@ func GetEqupis(page PaginateCondition, uid uint) (*[]models.Equip, *int64, error
 
 	query.Count(&count)
 
-	result := query.Order("name asc").Scopes(Paginate(page.Page, page.PerPage)).Find(&data)	
+	result := query.Order("name asc").Scopes(Paginate(page.Page, page.PerPage)).Find(&data)
 
 	if result.Error != nil {
 		return nil, &count, result.Error
