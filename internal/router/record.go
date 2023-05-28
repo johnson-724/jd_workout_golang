@@ -12,6 +12,6 @@ func RegisterRecord(r *gin.RouterGroup) {
 	equipGroup.GET("/", recordAction.List)
 	equipGroup.GET("/day-summary", recordAction.DaySummaryList)
 	equipGroup.POST("/", recordAction.CreateRecord)
-	equipGroup.PUT("/:id", recordAction.UpdateRecord)
+	equipGroup.PATCH("/:id", recordAction.UpdateRecord)
 	equipGroup.DELETE("/:id", recordAction.DeleteRecord)
 }

@@ -134,29 +134,6 @@ definitions:
       weights:
         type: string
     type: object
-  models.Record:
-    properties:
-      createdAt:
-        type: string
-      equip:
-        $ref: '#/definitions/models.Equip'
-      equip_id:
-        type: integer
-      id:
-        type: integer
-      name:
-        type: string
-      note:
-        type: string
-      reps:
-        type: integer
-      updatedAt:
-        type: string
-      userId:
-        type: integer
-      weight:
-        type: number
-    type: object
   record.createBody:
     properties:
       equip_id:
@@ -198,6 +175,15 @@ definitions:
       total:
         type: integer
     type: object
+  record.equip:
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+      note:
+        type: string
+    type: object
   record.equipGroup:
     properties:
       id:
@@ -217,12 +203,27 @@ definitions:
         type: integer
       data:
         items:
-          $ref: '#/definitions/models.Record'
+          $ref: '#/definitions/record.record'
         type: array
       perPage:
         type: integer
       total:
         type: integer
+    type: object
+  record.record:
+    properties:
+      equip:
+        $ref: '#/definitions/record.equip'
+      id:
+        type: integer
+      note:
+        type: string
+      reps:
+        type: integer
+      sets:
+        type: integer
+      weight:
+        type: number
     type: object
   record.recordDetail:
     properties:
@@ -631,7 +632,7 @@ paths:
       summary: delete record
       tags:
       - Record
-    put:
+    patch:
       consumes:
       - application/json
       description: update record
