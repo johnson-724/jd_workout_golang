@@ -61,11 +61,15 @@ func GetRecordList(page pageinate.PaginateCondition, uid uint) (*[]models.Record
 	records := []models.Record{}
 	count := int64(0)
 
-	query := db.Connection.Model(models.Record{}).Where("user_id = ?", uid)
+	query := db.Connection.Model(models.Record{}).
+		Where("user_id = ?", uid).
+		Preload("Equip").
+		Scopes(pageinate.Paginate(page.Page, page.PerPage)).
+		Find(&records)
 
-	query.Count(&count)
-
-	query.Scopes(pageinate.Paginate(page.Page, page.PerPage)).Find(&records)
+	if query.Error != nil {
+		return nil, nil, query.Error
+	}
 
 	return &records, &count, nil
 }
