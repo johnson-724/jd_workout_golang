@@ -599,7 +599,54 @@ const docTemplate = `{
             }
         },
         "/record/{id}": {
-            "put": {
+            "delete": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "delete record",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Record"
+                ],
+                "summary": "delete record",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "record id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{'message': 'delete success'}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "403": {
+                        "description": "{'message': 'jwt token error', 'error': 'error message'}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "422": {
+                        "description": "{'message': '缺少必要欄位', 'error': 'error message'}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "patch": {
                 "security": [
                     {
                         "Bearer": []
@@ -637,53 +684,6 @@ const docTemplate = `{
                 "responses": {
                     "200": {
                         "description": "{'message': 'update success', 'id' : '1'}",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "403": {
-                        "description": "{'message': 'jwt token error', 'error': 'error message'}",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "422": {
-                        "description": "{'message': '缺少必要欄位', 'error': 'error message'}",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "description": "delete record",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Record"
-                ],
-                "summary": "delete record",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "record id",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "{'message': 'delete success'}",
                         "schema": {
                             "type": "string"
                         }
@@ -1002,41 +1002,6 @@ const docTemplate = `{
                 }
             }
         },
-        "models.Record": {
-            "type": "object",
-            "properties": {
-                "createdAt": {
-                    "type": "string"
-                },
-                "equip": {
-                    "$ref": "#/definitions/models.Equip"
-                },
-                "equip_id": {
-                    "type": "integer"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "note": {
-                    "type": "string"
-                },
-                "reps": {
-                    "type": "integer"
-                },
-                "updatedAt": {
-                    "type": "string"
-                },
-                "userId": {
-                    "type": "integer"
-                },
-                "weight": {
-                    "type": "number"
-                }
-            }
-        },
         "record.createBody": {
             "type": "object",
             "required": [
@@ -1099,6 +1064,20 @@ const docTemplate = `{
                 }
             }
         },
+        "record.equip": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "note": {
+                    "type": "string"
+                }
+            }
+        },
         "record.equipGroup": {
             "type": "object",
             "properties": {
@@ -1128,7 +1107,7 @@ const docTemplate = `{
                 "data": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/models.Record"
+                        "$ref": "#/definitions/record.record"
                     }
                 },
                 "perPage": {
@@ -1136,6 +1115,29 @@ const docTemplate = `{
                 },
                 "total": {
                     "type": "integer"
+                }
+            }
+        },
+        "record.record": {
+            "type": "object",
+            "properties": {
+                "equip": {
+                    "$ref": "#/definitions/record.equip"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "note": {
+                    "type": "string"
+                },
+                "reps": {
+                    "type": "integer"
+                },
+                "sets": {
+                    "type": "integer"
+                },
+                "weight": {
+                    "type": "number"
                 }
             }
         },

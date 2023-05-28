@@ -27,7 +27,7 @@ type updateBody struct {
 // @Success 200 {string} string "{'message': 'update success', 'id' : '1'}"
 // @Failure 422 {string} string "{'message': '缺少必要欄位', 'error': 'error message'}"
 // @Failure 403 {string} string "{'message': 'jwt token error', 'error': 'error message'}"
-// @Router /record/{id} [put]
+// @Router /record/{id} [patch]
 // @Security Bearer
 func UpdateRecord(c *gin.Context) {
 	id := c.Param("id")
@@ -75,7 +75,7 @@ func UpdateRecord(c *gin.Context) {
 
 		return
 	}
-	
+
 	record.EquipId = updateBody.EquipId
 	record.Name = equip.Name
 	record.Weight = updateBody.Weight
