@@ -3,16 +3,30 @@ package record
 import (
 	"github.com/gin-gonic/gin"
 	"jd_workout_golang/app/middleware"
-	"jd_workout_golang/app/models"
 	"jd_workout_golang/app/repositories/pageinate"
 	repo "jd_workout_golang/app/repositories/record"
 )
 
 type listResponse struct {
-	Page    int             `json:"currentPage" form:"currentPage"`
-	PerPage int             `json:"perPage" form:"perPage"`
-	Data    []models.Record `json:"data"`
-	Total   int64           `json:"total"`
+	Page    int      `json:"currentPage" form:"currentPage"`
+	PerPage int      `json:"perPage" form:"perPage"`
+	Data    []record `json:"data"`
+	Total   int64    `json:"total"`
+}
+
+type record struct {
+	ID     uint    `json:"id"`
+	Weight float32 `json:"weight"`
+	Reps   int     `json:"reps"`
+	Sets   int     `json:"sets"`
+	Note   string  `json:"note"`
+	Equip  equip   `json:"equip"`
+}
+
+type equip struct {
+	ID   uint   `json:"id"`
+	Name string `json:"name"`
+	Note string `json:"note"`
 }
 
 // get record list
@@ -60,10 +74,28 @@ func List(c *gin.Context) {
 		return
 	}
 
+	var convertedRecords []record
+	for _, r := range *data {
+		convertedRecord := record{
+			ID:     r.ID,
+			Weight: r.Weight,
+			Reps:   int(r.Reps),
+			Sets:   0,
+			Note:   r.Note,
+			Equip: equip{
+				ID:   r.Equip.ID,
+				Name: r.Equip.Name,
+				Note: r.Equip.Note,
+			},
+		}
+
+		convertedRecords = append(convertedRecords, convertedRecord)
+	}
+
 	c.JSON(200, listResponse{
 		Page:    paginate.Page,
 		PerPage: paginate.PerPage,
-		Data:    *data,
+		Data:    convertedRecords,
 		Total:   *count,
 	})
 }
