@@ -27,6 +27,7 @@ type equip struct {
 	ID   uint   `json:"id"`
 	Name string `json:"name"`
 	Note string `json:"note"`
+	Image string `json:"image"`
 }
 
 // get record list
@@ -86,6 +87,7 @@ func List(c *gin.Context) {
 				ID:   r.Equip.ID,
 				Name: r.Equip.Name,
 				Note: r.Equip.Note,
+				Image: r.Equip.Image,
 			},
 		}
 
