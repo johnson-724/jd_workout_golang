@@ -2,14 +2,16 @@ package file
 
 import (
 	"fmt"
-	"github.com/gin-gonic/gin"
 	"jd_workout_golang/lib/helper"
 	"mime/multipart"
 	"path/filepath"
+	"strings"
+
+	"github.com/gin-gonic/gin"
 )
 
 type FileStore interface {
-	Valdate() error
+	Validate() error
 	Store() (string, error)
 }
 
@@ -19,7 +21,7 @@ type GinFileStore struct {
 	FileName string
 }
 
-func (fs GinFileStore) Valdate() error {
+func (fs GinFileStore) Validate() error {
 
 	ext := filepath.Ext(fs.File.Filename)
 
@@ -34,9 +36,9 @@ func (fs GinFileStore) Store() (string, error) {
 
 	gin := gin.Context{}
 
-	path := fmt.Sprintf("./public/%s/%s%s", fs.Path, helper.RandString(10), filepath.Ext(fs.File.Filename))
+	storePath := fmt.Sprintf("./public/%s/%s%s", fs.Path, helper.RandString(10), filepath.Ext(fs.File.Filename))
 
-	gin.SaveUploadedFile(fs.File, path)
+	gin.SaveUploadedFile(fs.File, storePath)
 
-	return path, nil
+	return strings.Replace(storePath, "/public", "", 1), nil
 }
