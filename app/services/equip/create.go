@@ -89,7 +89,7 @@ func StoreFile(c *gin.Context) (string, error) {
 			FileName: file.Filename,
 		}
 
-		if extCheck := fs.Valdate(); extCheck != nil {
+		if extCheck := fs.Validate(); extCheck != nil {
 
 			return "", extCheck
 		}

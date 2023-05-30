@@ -14,7 +14,7 @@ import (
 type UserInfo struct {
 	Email    string `json:"email"`
 	Name     string `json:"name"`
-	Pricture string `json:"picture"`
+	Picture string `json:"picture"`
 }
 
 func CreateGoogleOAuthURL() string {
@@ -74,7 +74,7 @@ func GetUserInfoWithAccessToken(token string) (*UserInfo, error) {
 	return &UserInfo{
 		Email:    userInfo.Email,
 		Name:     userInfo.Name,
-		Pricture: userInfo.Picture,
+		Picture: userInfo.Picture,
 
 	}, nil
 }

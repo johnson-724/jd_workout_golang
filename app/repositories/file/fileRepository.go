@@ -11,7 +11,7 @@ import (
 )
 
 type FileStore interface {
-	Valdate() error
+	Validate() error
 	Store() (string, error)
 }
 
@@ -21,7 +21,7 @@ type GinFileStore struct {
 	FileName string
 }
 
-func (fs GinFileStore) Valdate() error {
+func (fs GinFileStore) Validate() error {
 
 	ext := filepath.Ext(fs.File.Filename)
 
