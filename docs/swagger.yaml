@@ -390,7 +390,6 @@ paths:
         type: integer
       - in: formData
         name: name
-        required: true
         type: string
       - in: formData
         name: note

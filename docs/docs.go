@@ -226,8 +226,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "name": "name",
-                        "in": "formData",
-                        "required": true
+                        "in": "formData"
                     },
                     {
                         "type": "string",

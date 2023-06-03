@@ -67,8 +67,13 @@ func UpdateEquip(c *gin.Context) {
 		return
 	}
 
-	equip.Name = updateFrom.Name
-	equip.Note = updateFrom.Note
+	if _, ok := c.GetPostForm("name"); ok {
+		equip.Name = updateFrom.Name
+	}
+
+	if _, ok := c.GetPostForm("note"); ok {
+		equip.Note = &updateFrom.Note
+	}
 
 	path, err := StoreFile(c)
 
