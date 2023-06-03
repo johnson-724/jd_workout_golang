@@ -67,8 +67,8 @@ func LoginAction(c *gin.Context) {
 
 	c.JSON(200, gin.H{
 		"message": "login success",
-		"token":  token,
-		"reset":  user.ResetPassword,
+		"token":   token,
+		"reset":   user.ResetPassword,
 	})
 }
 
@@ -197,7 +197,7 @@ func bindUserWithThridPartyAccount(thirdPartyInfo *google.UserInfo, user *models
 func validateOnGoogle(userInfo *google.UserInfo, c *gin.Context) {
 	user, err := repo.GetUserByEmail(userInfo.Email)
 
-	if err != nil {
+	if err != nil && err != gorm.ErrRecordNotFound {
 		c.JSON(422, gin.H{
 			"message": "登入失敗, 無法取得使用者資訊",
 			"error":   err.Error(),
