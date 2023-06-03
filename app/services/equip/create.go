@@ -25,7 +25,7 @@ import (
 func CreateEquip(c *gin.Context) {
 	createBody := struct {
 		Name string `json:"name" form:"name" binding:"required"`
-		Note string `json:"note" form:"note"`
+		Note *string `json:"note" form:"note"`
 	}{}
 
 	if err := c.ShouldBind(&createBody); err != nil {
@@ -56,7 +56,7 @@ func CreateEquip(c *gin.Context) {
 		return
 	}
 
-	equip.Image = path
+	equip.Image = &path
 
 	id, err := repo.Create(&equip)
 

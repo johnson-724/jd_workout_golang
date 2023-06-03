@@ -66,8 +66,9 @@ func UpdateWeight(c *gin.Context) {
 		return
 	}
 
-	json,_ := json.Marshal(&weightForm.Weights)
-	equip.Weights = string(json)
+	json, _ := json.Marshal(&weightForm.Weights)
+	jsonPtr := string(json)
+	equip.Weights = &jsonPtr
 
 	repo.Update(equip)
 

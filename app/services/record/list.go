@@ -86,8 +86,8 @@ func List(c *gin.Context) {
 			Equip: equip{
 				ID:   r.Equip.ID,
 				Name: r.Equip.Name,
-				Note: r.Equip.Note,
-				Image: r.Equip.Image,
+				Note: *r.Equip.Note,
+				Image: *r.Equip.Image,
 			},
 		}
 

@@ -88,7 +88,7 @@ func UpdateEquip(c *gin.Context) {
 		return
 	}
 
-	equip.Image = path
+	equip.Image = &path
 
 	repo.Update(equip)
 
