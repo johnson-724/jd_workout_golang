@@ -23,7 +23,7 @@ type GinFileStore struct {
 
 func (fs GinFileStore) Validate() error {
 
-	ext := filepath.Ext(fs.File.Filename)
+	ext := strings.ToLower(filepath.Ext(fs.File.Filename))
 
 	if ext != ".jpg" && ext != ".png" {
 		return fmt.Errorf("file type error")
@@ -40,5 +40,5 @@ func (fs GinFileStore) Store() (string, error) {
 
 	gin.SaveUploadedFile(fs.File, storePath)
 
-	return strings.Replace(storePath, "/public", "", 1), nil
+	return strings.Replace(storePath, "./public", "", 1), nil
 }
