@@ -5,7 +5,7 @@ on:
     branches:
       - master
 jobs:
-  test:
+  deploy:
     runs-on: ubuntu-latest
     steps:
       - name: Pull image and deploy, and migrate
@@ -13,7 +13,6 @@ jobs:
         with:
           host: ${{ secrets.PROD_DEPLOY_HOST }}
           username: ${{ secrets.PROD_DEPLOY_USERNAME }}
-          passphrase: ${{ secrets.PROD_DEPLOY_PASSPHRASE }}
           key: ${{ secrets.PROD_DEPLOY_PRIVATE_KEY }}
           port: ${{ secrets.PROD_DEPLOY_PORT }}
           script: |
