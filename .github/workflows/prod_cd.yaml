@@ -1,0 +1,25 @@
+name: CD
+
+on:
+  push:
+    branches:
+      - master
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pull image and deploy, and migrate
+        uses: appleboy/ssh-action@v0.1.8
+        with:
+          host: ${{ secrets.PROD_DEPLOY_HOST }}
+          username: ${{ secrets.PROD_DEPLOY_USERNAME }}
+          passphrase: ${{ secrets.PROD_DEPLOY_PASSPHRASE }}
+          key: ${{ secrets.PROD_DEPLOY_PRIVATE_KEY }}
+          port: ${{ secrets.PROD_DEPLOY_PORT }}
+          script: |
+            export PROCESS_TYPE=cd && 
+            cd /app/jd_workout && 
+            docker-compose pull && 
+            docker-compose up -d && 
+            docker image prune -f &&
+            docker-compose exec -T app /app/migrate migrate
