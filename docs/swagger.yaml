@@ -266,7 +266,7 @@ paths:
     get:
       consumes:
       - application/json
-      description: Get app version
+      description: Get app version info
       produces:
       - application/json
       responses:
@@ -274,7 +274,7 @@ paths:
           description: '{''latestVersion: 1.0.0'', ''requiredVersion'': ''1.0.0''}'
           schema:
             type: string
-      summary: Get app version
+      summary: Get app version info
       tags:
       - App
   /equip:
