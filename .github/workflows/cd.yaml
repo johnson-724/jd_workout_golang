@@ -18,6 +18,7 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
           registry: ghcr.io
           dockerfile: ./docker/app/DockerfileCI
+          tags: latest
       - name: Publish to Registry Mysql
         uses: elgohr/Publish-Docker-Github-Action@v5
         with:
@@ -26,6 +27,7 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
           registry: ghcr.io
           dockerfile: ./docker/mysql/DockerfileCI
+          tags: latest
       - name: Publish to Registry Redis
         uses: elgohr/Publish-Docker-Github-Action@v5
         with:
@@ -34,6 +36,7 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
           registry: ghcr.io
           dockerfile: ./docker/redis/DockerfileCI
+          tags: latest
       - name: Pull image and deploy, and migrate
         uses: appleboy/ssh-action@v0.1.8
         with:
