@@ -100,7 +100,7 @@ func LoginWithGoogleAction(c *gin.Context) {
 }
 
 // LoginWithAuthkAction logs in a user with the provided google token,
-func LoginWithGoogleAuthkAction(c *gin.Context) {
+func LoginWithGoogleAuthAction(c *gin.Context) {
 	token, err := google.GetAccessToken(c.Query("code"))
 
 	if err != nil {
@@ -174,9 +174,10 @@ func LoginWithGoogleAccessTokenAction(c *gin.Context) {
 	validateOnGoogle(userInfo, c)
 }
 
-func bindUserWithThridPartyAccount(thirdPartyInfo *google.UserInfo, user *models.User) {
+func bindUserWithThirdPartyAccount(thirdPartyInfo *google.UserInfo, user *models.User) {
 	// create user with third party account
 	if user == nil {
+		user := &models.User{}
 		user.Username = thirdPartyInfo.Name
 		user.Email = thirdPartyInfo.Email
 		user.EmailVerified = 1
@@ -208,7 +209,7 @@ func validateOnGoogle(userInfo *google.UserInfo, c *gin.Context) {
 		return
 	}
 
-	bindUserWithThridPartyAccount(userInfo, user)
+	bindUserWithThirdPartyAccount(userInfo, user)
 
 	jwtToken, _ := jwtHelper.GenerateToken(user)
 
