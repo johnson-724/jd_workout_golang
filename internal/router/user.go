@@ -10,7 +10,7 @@ func RegisterUser(r *gin.RouterGroup) {
 	r.POST("/register", authAction.RegisterAction)
 	r.POST("/login", authAction.LoginAction)
 	r.GET("/login/google", authAction.LoginWithGoogleAction)
-	r.GET("/login/google/redirect", authAction.LoginWithGoogleAuthkAction)
+	r.GET("/login/google/redirect", authAction.LoginWithGoogleAuthAction)
 	r.POST("/login/google/access-token", authAction.LoginWithGoogleAccessTokenAction)
 
 	userGroup := r.Group("/user").Use(auth.ValidateToken)
