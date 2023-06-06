@@ -18,7 +18,7 @@ const docTemplate = `{
     "paths": {
         "/app/version": {
             "get": {
-                "description": "Get app version",
+                "description": "Get app version info",
                 "consumes": [
                     "application/json"
                 ],
@@ -28,7 +28,7 @@ const docTemplate = `{
                 "tags": [
                     "App"
                 ],
-                "summary": "Get app version",
+                "summary": "Get app version info",
                 "responses": {
                     "200": {
                         "description": "{'latestVersion: 1.0.0', 'requiredVersion': '1.0.0'}",

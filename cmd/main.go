@@ -100,8 +100,8 @@ func setFileLog() {
 	log.SetOutput(logFile)
 }
 
-// @Summary Get app version
-// @Description Get app version
+// @Summary Get app version info
+// @Description Get app version info
 // @Tags App
 // @Accept  json
 // @Produce  json
