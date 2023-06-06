@@ -174,7 +174,18 @@ func LoginWithGoogleAccessTokenAction(c *gin.Context) {
 	validateOnGoogle(userInfo, c)
 }
 
-func bindUserWithThridPartyAccount(thirdPartyInfo *google.UserInfo, user *models.User) {
+func bindUserWithThirdPartyAccount(thirdPartyInfo *google.UserInfo, user *models.User) {
+	// create user with third party account
+	if user == nil {
+		user.Username = thirdPartyInfo.Name
+		user.Email = thirdPartyInfo.Email
+		user.EmailVerified = 1
+
+		repo.Create(user)
+
+		return
+	}
+
 	// user exist and email not verified
 	if user.ID != 0 && user.EmailVerified != 1 {
 		user.EmailVerified = 1
@@ -184,14 +195,6 @@ func bindUserWithThridPartyAccount(thirdPartyInfo *google.UserInfo, user *models
 		return
 	}
 
-	// create user with third party account
-	if user.ID == 0 {
-		user.Username = thirdPartyInfo.Name
-		user.Email = thirdPartyInfo.Email
-		user.EmailVerified = 1
-
-		repo.Create(user)
-	}
 }
 
 func validateOnGoogle(userInfo *google.UserInfo, c *gin.Context) {
@@ -208,7 +211,7 @@ func validateOnGoogle(userInfo *google.UserInfo, c *gin.Context) {
 		return
 	}
 
-	bindUserWithThridPartyAccount(userInfo, user)
+	bindUserWithThirdPartyAccount(userInfo, user)
 
 	jwtToken, _ := jwtHelper.GenerateToken(user)
 
