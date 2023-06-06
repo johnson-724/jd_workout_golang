@@ -1,10 +1,26 @@
+## Android Play Store
+
+[Link](https://play.google.com/store/apps/details?id=com.govel.workout&hl=zh-TW)
+
+## iOS App Store
+
+[//]: # (emoji angry)
+
+Can't afford the fee. :hankey: :hankey: :hankey:
+
 ## Online API document
 
-http://52.192.216.234:6003/swagger/index.html
+### Dev
+
+http://www.govel-workout.com:6003/swagger/index.html
+
+### Prod
+
+http://www.govel-workout.com/swagger/index.html
 
 ## Sentry
 
-http://52.192.216.234:6002/
+http://www.govel-workout.com:6002/
 
 ## Run docker
 
