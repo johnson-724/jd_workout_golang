@@ -13,7 +13,7 @@ func GetUserByEmail(email string) (*models.User, error) {
 	result := db.Connection.Where("email = ?", email).First(&user)
 
 	if result.Error != nil && result.Error == gorm.ErrRecordNotFound {
-		return nil, result.Error
+		return &user, result.Error
 	}
 
 	return &user, nil
