@@ -176,13 +176,14 @@ func LoginWithGoogleAccessTokenAction(c *gin.Context) {
 
 func bindUserWithThirdPartyAccount(thirdPartyInfo *google.UserInfo, user *models.User) {
 	// create user with third party account
-	if user == nil {
-		user := &models.User{}
+	if user.ID == 0 {
 		user.Username = thirdPartyInfo.Name
 		user.Email = thirdPartyInfo.Email
 		user.EmailVerified = 1
 
 		repo.Create(user)
+
+		return
 	}
 
 	// user exist and email not verified
