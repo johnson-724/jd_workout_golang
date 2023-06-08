@@ -46,3 +46,14 @@ func (fs GinFileStore) Store() (*string, error) {
 
 	return &path, nil
 }
+
+func (fs GinFileStore) GetPath() *string {
+	url := os.Getenv("APP_URL")
+	if *fs.Path == "" {
+		return nil
+	}
+
+	path := fmt.Sprintf("%s%s", url, *fs.Path)
+
+	return &path
+}
