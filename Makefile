@@ -1,2 +1,2 @@
 test:
-	go test -cover ./... --coverprofile=coverage.txt -race -covermode=atomic -cover=true
+	go test -cover ./... --coverprofile=coverage.out -race -covermode=atomic -cover=true
