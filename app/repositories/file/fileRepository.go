@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"jd_workout_golang/lib/helper"
 	"mime/multipart"
+	"os"
 	"path/filepath"
 	"strings"
 
@@ -12,12 +13,13 @@ import (
 
 type FileStore interface {
 	Validate() error
-	Store() (string, error)
+	Store() (*string, error)
+	GetPath() *string
 }
 
 type GinFileStore struct {
 	File     *multipart.FileHeader
-	Path     string
+	Path     *string
 	FileName string
 }
 
@@ -32,13 +34,15 @@ func (fs GinFileStore) Validate() error {
 	return nil
 }
 
-func (fs GinFileStore) Store() (string, error) {
+func (fs GinFileStore) Store() (*string, error) {
 
 	gin := gin.Context{}
 
-	storePath := fmt.Sprintf("./public/%s/%s%s", fs.Path, helper.RandString(10), filepath.Ext(fs.File.Filename))
+	storePath := fmt.Sprintf("./public/%s/%s%s", *fs.Path, helper.RandString(10), filepath.Ext(fs.File.Filename))
 
 	gin.SaveUploadedFile(fs.File, storePath)
 
-	return strings.Replace(storePath, "./public", "", 1), nil
+	path := strings.Replace(storePath, "./public", "", 1)
+
+	return &path, nil
 }

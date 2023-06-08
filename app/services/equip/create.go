@@ -24,7 +24,7 @@ import (
 // @Security Bearer
 func CreateEquip(c *gin.Context) {
 	createBody := struct {
-		Name string `json:"name" form:"name" binding:"required"`
+		Name string  `json:"name" form:"name" binding:"required"`
 		Note *string `json:"note" form:"note"`
 	}{}
 
@@ -56,7 +56,7 @@ func CreateEquip(c *gin.Context) {
 		return
 	}
 
-	equip.Image = &path
+	equip.Image = path
 
 	id, err := repo.Create(&equip)
 
@@ -77,27 +77,29 @@ func CreateEquip(c *gin.Context) {
 	})
 }
 
-func StoreFile(c *gin.Context) (string, error) {
+func StoreFile(c *gin.Context) (*string, error) {
 	var fs fsRepo.FileStore
 
-	var path string
+	var path *string
 
 	if file, err := c.FormFile("image"); err == nil {
+		fp := "images"
+		fpPtr := &fp
 		fs = fsRepo.GinFileStore{
 			File:     file,
-			Path:     "images",
+			Path:     fpPtr,
 			FileName: file.Filename,
 		}
 
 		if extCheck := fs.Validate(); extCheck != nil {
 
-			return "", extCheck
+			return path, extCheck
 		}
 
 		path, err = fs.Store()
 
 		if err != nil {
-			return "", err
+			return path, err
 		}
 	}
 
