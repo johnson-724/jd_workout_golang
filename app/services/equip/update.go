@@ -1,10 +1,10 @@
 package equip
 
 import (
+	"github.com/gin-gonic/gin"
 	"jd_workout_golang/app/middleware"
 	repo "jd_workout_golang/app/repositories/equip"
 	"strconv"
-	"github.com/gin-gonic/gin"
 )
 
 type updateFrom struct {
@@ -29,9 +29,9 @@ type updateFrom struct {
 func UpdateEquip(c *gin.Context) {
 
 	id := c.Param("id")
-	
-	weightId , err:= strconv.ParseUint(id, 10, 32)
-	
+
+	weightId, err := strconv.ParseUint(id, 10, 32)
+
 	if err != nil {
 		c.JSON(422, gin.H{
 			"message": "uri id error",
@@ -53,7 +53,7 @@ func UpdateEquip(c *gin.Context) {
 
 		return
 	}
-	
+
 	equip, err := repo.GetEquip(weightId, middleware.Uid)
 
 	if err != nil {
@@ -88,7 +88,7 @@ func UpdateEquip(c *gin.Context) {
 		return
 	}
 
-	equip.Image = &path
+	equip.Image = path
 
 	repo.Update(equip)
 

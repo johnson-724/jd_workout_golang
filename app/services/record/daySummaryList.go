@@ -1,7 +1,9 @@
 package record
 
 import (
+	"fmt"
 	"jd_workout_golang/app/middleware"
+	fsRepo "jd_workout_golang/app/repositories/file"
 	"strconv"
 	// "strconv"
 	// "jd_workout_golang/app/models"
@@ -34,7 +36,7 @@ type dateSummaryListResponse struct {
 // @Success 200 {object} dateSummaryListResponse
 // @Failure 422 {string} string "{'message': '缺少必要欄位', 'error': 'error message'}"
 // @Failure 403 {string} string "{'message': 'jwt token error', 'error': 'error message'}"
-// @Router /record/day-summary [get]f
+// @Router /record/day-summary [get]
 // @Security Bearer
 func DaySummaryList(c *gin.Context) {
 	paginate := recordListRequest{
@@ -89,8 +91,9 @@ type dateGroup struct {
 type equipGroup struct {
 	ID      uint           `json:"id"`
 	Name    string         `json:"name"`
-	Note    string         `json:"note"`
+	Note    *string        `json:"note"`
 	Records []recordDetail `json:"records"`
+	Image   *string        `json:"image"`
 }
 
 type recordDetail struct {
@@ -119,17 +122,22 @@ func groupByRecord(data []repo.RecordByDate) []dateGroup {
 			})
 		}
 
-		if currentEquipId == 0 || currentEquipId != int(v.EquipId) {
-			currentEquipId = int(v.EquipId)
+		if currentEquipId == 0 || currentEquipId != int(v.Equip.ID) {
+			currentEquipId = int(v.Equip.ID)
+			file := fsRepo.GinFileStore{
+				Path: v.Equip.Image,
+			}
+			v.Equip.Image = file.GetPath()
 			group[len(group)-1].Equips = append(group[len(group)-1].Equips, equipGroup{
-				ID:      v.EquipId,
-				Name:    v.Name,
-				Note:    v.Note,
+				ID:      v.Equip.ID,
+				Name:    v.Equip.Name,
+				Note:    v.Equip.Note,
 				Records: make([]recordDetail, 0),
+				Image:   v.Equip.Image,
 			})
 		}
 
-		key := strconv.FormatFloat(float64(v.Weight), 'E', -1, 64) + "-" + strconv.Itoa(int(v.Reps))
+		key := fmt.Sprintf("%d_%s", v.EquipId, strconv.FormatFloat(float64(v.Weight), 'E', -1, 64)+"-"+strconv.Itoa(int(v.Reps)))
 		if currentRecordKey == "" || currentRecordKey != key {
 			currentRecordKey = key
 			recordList := group[len(group)-1].Equips[len(group[len(group)-1].Equips)-1].Records

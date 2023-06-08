@@ -4,6 +4,7 @@ import (
 	"jd_workout_golang/app/middleware"
 	"jd_workout_golang/app/models"
 	repo "jd_workout_golang/app/repositories/equip"
+	fsRepo "jd_workout_golang/app/repositories/file"
 	recordRepo "jd_workout_golang/app/repositories/record"
 	"strconv"
 	"strings"
@@ -112,7 +113,7 @@ func List(c *gin.Context) {
 		recordIds := make([]uint, 0)
 
 		for _, id := range idStrings {
-			value ,_ := strconv.ParseUint(id, 10, 0)
+			value, _ := strconv.ParseUint(id, 10, 0)
 			recordIds = append(recordIds, uint(value))
 		}
 
@@ -128,6 +129,10 @@ func List(c *gin.Context) {
 
 	equipData := []equipExpand{}
 	for _, v := range *data {
+		file := fsRepo.GinFileStore{
+			Path: v.Image,
+		}
+		v.Image = file.GetPath()
 
 		equipData = append(equipData, equipExpand{
 			Equip: v,
