@@ -1,8 +1,7 @@
-package tests
+package router
 
 import (
 	"encoding/json"
-	"jd_workout_golang/internal/router"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -16,7 +15,7 @@ var r *gin.Engine
 func init() {
 	// 註冊 router
 	r = gin.Default()
-	router.RegisterUser(r.Group("/api"))
+	RegisterUser(r.Group("/api"))
 }
 
 func TestUserWithoutToken(t *testing.T) {
@@ -43,9 +42,9 @@ func TestUserWithoutToken(t *testing.T) {
 
 func TestUserWithInvalidToken(t *testing.T) {
 	testCases := []struct {
-		token string
+		token  string
 		status int
-		error string
+		error  string
 	}{
 		{"test123", 401, "invalid token"},
 		{"Bearer test1234", 401, "token is malformed: token contains an invalid number of segments"},
@@ -53,7 +52,7 @@ func TestUserWithInvalidToken(t *testing.T) {
 	}
 
 	// 建立 response & request
-	
+
 	for _, testCase := range testCases {
 		w := httptest.NewRecorder()
 		req, _ := http.NewRequest("GET", "/api/user/", nil)
