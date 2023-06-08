@@ -93,6 +93,7 @@ func GetDateSummaryRecords(page pageinate.PaginateCondition, uid uint) (*[]Recor
 	format := db.Connection.Table("(?) as tmp", groupByQuery)
 
 	db.Connection.Model(models.Record{}).
+		Preload("Equip").
 		Where("user_id = ?", uid).
 		Where("date_format(created_at, '%Y-%m-%d') IN (?)", format).
 		Select("*, date_format(created_at, '%Y-%m-%d') as date").
