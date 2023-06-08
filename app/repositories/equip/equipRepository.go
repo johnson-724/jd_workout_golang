@@ -34,9 +34,10 @@ func Delete(equip *models.Equip) error {
 
 func Update(equip *models.Equip) error {
 	result := db.Connection.Model(equip).Updates(map[string]interface{}{
-		"name": equip.Name,
-		"note": equip.Note,
-		"image": equip.Image,
+		"name":    equip.Name,
+		"note":    equip.Note,
+		"image":   equip.Image,
+		"weights": equip.Weights,
 	})
 
 	if result.Error != nil {
