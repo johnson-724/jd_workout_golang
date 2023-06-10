@@ -49,7 +49,8 @@ func (fs GinFileStore) Store() (*string, error) {
 
 func (fs GinFileStore) GetPath() *string {
 	url := os.Getenv("APP_URL")
-	if *fs.Path == "" {
+
+	if fs.Path == nil {
 		return nil
 	}
 
