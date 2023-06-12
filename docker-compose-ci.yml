@@ -11,7 +11,8 @@ services:
       - ./.env:/app/.env
       - ./credentials.json:/app/credential/google/credentials.json
     environment:
-      - GO111MODULE=on
+      WAIT_HOSTS: mysql:3306
+        - GO111MODULE=on
   mysql:
     image: ghcr.io/jdworkoutapp/jd_workout_golang_mysql:latest
     ports:
