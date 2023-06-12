@@ -122,22 +122,22 @@ func groupByRecord(data []repo.RecordByDate) []dateGroup {
 			})
 		}
 
-		if currentEquipId == 0 || currentEquipId != int(v.Equip.ID) {
-			currentEquipId = int(v.Equip.ID)
+		if currentEquipId == 0 || currentEquipId != int(v.Record.EquipId) {
+			currentEquipId = int(v.Record.EquipId)
 			file := fsRepo.GinFileStore{
 				Path: v.Equip.Image,
 			}
 			v.Equip.Image = file.GetPath()
 			group[len(group)-1].Equips = append(group[len(group)-1].Equips, equipGroup{
-				ID:      v.Equip.ID,
-				Name:    v.Equip.Name,
+				ID:      v.Record.EquipId,
+				Name:    v.Record.Name,
 				Note:    v.Equip.Note,
 				Records: make([]recordDetail, 0),
 				Image:   v.Equip.Image,
 			})
 		}
 
-		key := fmt.Sprintf("%d_%s", v.EquipId, strconv.FormatFloat(float64(v.Weight), 'E', -1, 64)+"-"+strconv.Itoa(int(v.Reps)))
+		key := fmt.Sprintf("%s_%d_%s_%s", currentDate, v.EquipId, strconv.FormatFloat(float64(v.Weight), 'f', 2, 64), strconv.Itoa(int(v.Reps)))
 		if currentRecordKey == "" || currentRecordKey != key {
 			currentRecordKey = key
 			recordList := group[len(group)-1].Equips[len(group[len(group)-1].Equips)-1].Records
@@ -162,9 +162,6 @@ func groupByRecord(data []repo.RecordByDate) []dateGroup {
 			record.Note = append(record.Note, v.Note)
 		}
 
-		group[len(group)-1].
-			Equips[len(group[len(group)-1].Equips)-1].
-			Records[len(group[len(group)-1].Equips[len(group[len(group)-1].Equips)-1].Records)-1] = *record
 	}
 
 	return group
