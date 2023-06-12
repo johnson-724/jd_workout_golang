@@ -21,5 +21,7 @@ RUN cp /app/release/api-binary /bin/
 RUN cp /app/release/migrate /app/
 RUN cp /app/release/migrations.so /app/database/migrations
 
-COPY --from=ghcr.io/ufoscout/docker-compose-wait:latest /wait /wait
-CMD /wait && /bin/api-binary
+# todo: wait for mysql to start, to be optimized
+RUN sleep 10
+
+ENTRYPOINT ["/bin/api-binary"]
