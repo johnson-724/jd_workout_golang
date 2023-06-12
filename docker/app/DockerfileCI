@@ -21,4 +21,7 @@ RUN cp /app/release/api-binary /bin/
 RUN cp /app/release/migrate /app/
 RUN cp /app/release/migrations.so /app/database/migrations
 
+COPY --from=ghcr.io/ufoscout/docker-compose-wait:latest /wait /wait
+CMD /wait
+
 ENTRYPOINT ["/bin/api-binary"]
