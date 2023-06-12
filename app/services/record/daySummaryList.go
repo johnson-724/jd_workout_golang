@@ -157,8 +157,14 @@ func groupByRecord(data []repo.RecordByDate) []dateGroup {
 			Records[len(group[len(group)-1].Equips[len(group[len(group)-1].Equips)-1].Records)-1]
 
 		record.IDS = append(record.IDS, v.ID)
-		record.Sets += int(1)
-		record.Note = append(record.Note, v.Note)
+		record.Sets += 1
+		if v.Note != "" {
+			record.Note = append(record.Note, v.Note)
+		}
+
+		group[len(group)-1].
+			Equips[len(group[len(group)-1].Equips)-1].
+			Records[len(group[len(group)-1].Equips[len(group[len(group)-1].Equips)-1].Records)-1] = *record
 	}
 
 	return group
